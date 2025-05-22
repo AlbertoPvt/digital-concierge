@@ -1,55 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Concierge Assistant</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <ul class="nav nav-tabs" id="tabs">
-        <li class="nav-item">
-          <a class="nav-link active" href="#chat" data-bs-toggle="tab"
-            >Chat Assistant</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#deals" data-bs-toggle="tab"
-            >Offerte Locali</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#videos" data-bs-toggle="tab"
-            >Video-Experience</a
-          >
-        </li>
-      </ul>
-      <div class="tab-content mt-3">
-        <div class="tab-pane fade show active" id="chat">
-          <div id="chatBox"></div>
-          <input
-            type="text"
-            id="userInput"
-            class="form-control mt-3"
-            placeholder="Scrivi qui..."
-          />
-          <button onclick="sendMessage()" class="btn btn-primary mt-2">
-            Invia
-          </button>
-        </div>
-        <div class="tab-pane fade" id="deals">
-          <div id="dealsContent"></div>
-        </div>
-        <div class="tab-pane fade" id="videos">
-          <div id="videoContent"></div>
-        </div>
-      </div>
-    </div>
-    <script src="config.js"></script>
-    <script src="assistant.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Benvenuto!</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body class="text-center p-5">
+  <h1 class="mb-4">Benvenuto nel sito del tuo soggiorno</h1>
+  <p class="lead">Scopri le nostre funzionalità:</p>
+  <div class="d-grid gap-3 col-6 mx-auto mt-4">
+    <a href="assistant.html" class="btn btn-primary btn-lg">🧠 Concierge Virtuale</a>
+    <a href="deals.html" class="btn btn-success btn-lg">🎁 Offerte locali</a>
+    <a href="videos.html" class="btn btn-warning btn-lg">🎬 Video esperienze</a>
+  </div>
+</body>
 </html>
