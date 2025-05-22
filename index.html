@@ -1,19 +1,247 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Benvenuto!</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benvenuto!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 { width: 80px; height: 80px; top: 20%; left: 10%; animation-delay: -1s; }
+        .shape-2 { width: 60px; height: 60px; top: 60%; right: 15%; animation-delay: -3s; }
+        .shape-3 { width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: -2s; }
+        .shape-4 { width: 40px; height: 40px; top: 30%; right: 30%; animation-delay: -4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out;
+            margin: auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.1); }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 24px;
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn .icon {
+            font-size: 1.5rem;
+            margin-right: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-btn:hover .icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #84fab0, #8fd3f4);
+            color: #1e293b;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(132, 250, 176, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #1e293b;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(252, 182, 159, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                background-attachment: scroll;
+            }
+            
+            .container {
+                padding: 32px 24px;
+                margin: 10px auto;
+                min-height: calc(100vh - 20px);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .nav-btn {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+            
+            .nav-btn .icon {
+                font-size: 1.3rem;
+                margin-right: 12px;
+            }
+        }
+
+        /* Subtle pulse animation for buttons */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        .nav-btn:hover {
+            animation: pulse 2s infinite;
+        }
+    </style>
 </head>
-<body class="bg-light text-center p-4">
-  <h1 class="mb-4">🎉 Benvenuto!</h1>
-  <p class="lead">Scopri tutto ciò che il tuo soggiorno ha da offrire:</p>
-  <div class="d-grid gap-3 mt-4">
-    <a href="assistant.html" class="btn btn-primary btn-lg w-100">🧠 Concierge Virtuale</a>
-    <a href="deals.html" class="btn btn-success btn-lg w-100">🎁 Offerte locali</a>
-    <a href="videos.html" class="btn btn-warning btn-lg w-100">🎬 Video esperienze</a>
-  </div>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+    </div>
+
+    <div class="container">
+        <h1 class="welcome-title">🎉 Benvenuto!</h1>
+        <p class="welcome-subtitle">Scopri tutto ciò che il tuo soggiorno ha da offrire</p>
+        
+        <div class="nav-buttons">
+            <a href="assistant.html" class="nav-btn btn-primary">
+                <span class="icon">🧠</span>
+                <span>Concierge Virtuale</span>
+            </a>
+            <a href="deals.html" class="nav-btn btn-success">
+                <span class="icon">🎁</span>
+                <span>Offerte locali</span>
+            </a>
+            <a href="videos.html" class="nav-btn btn-warning">
+                <span class="icon">🎬</span>
+                <span>Video esperienze</span>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,29 +1,449 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Esperienze</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Esperienze</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(-4px);
+        }
+
+        .header-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .videos-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 0 0 24px 24px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: none;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            animation: cardSlide 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .video-card:nth-child(1) { animation-delay: 0.1s; }
+        .video-card:nth-child(2) { animation-delay: 0.2s; }
+        .video-card:nth-child(3) { animation-delay: 0.3s; }
+        .video-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardSlide {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-card:hover .video-thumbnail::before {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .video-card:hover .play-icon {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .video-content {
+            padding: 24px;
+        }
+
+        .video-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .video-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .watch-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .watch-btn:hover::before {
+            left: 100%;
+        }
+
+        .watch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .duration-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Different gradient themes for cards */
+        .video-card:nth-child(4n+1) .video-thumbnail {
+            background: linear-gradient(135deg, #84fab0, #8fd3f4);
+        }
+
+        .video-card:nth-child(4n+2) .video-thumbnail {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        }
+
+        .video-card:nth-child(4n+3) .video-thumbnail {
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+        }
+
+        .video-card:nth-child(4n+4) .video-thumbnail {
+            background: linear-gradient(135deg, #fecdd3, #fca5a5);
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header, .videos-container {
+                padding: 24px 20px;
+            }
+            
+            .header-title {
+                font-size: 1.8rem;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .video-thumbnail {
+                height: 180px;
+            }
+            
+            .video-content {
+                padding: 20px;
+            }
+            
+            .video-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header, .videos-container {
+                padding: 20px 16px;
+            }
+            
+            .header-title {
+                font-size: 1.6rem;
+                gap: 12px;
+            }
+            
+            .video-thumbnail {
+                height: 160px;
+            }
+            
+            .play-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light p-4">
-  <a href="index.html" class="btn btn-link mb-3">← Torna alla Home</a>
-  <h2 class="mb-4 text-center">🎬 Esperienze da vivere</h2>
-  <div id="videoContent" class="row g-3"></div>
-  <script src="config.js"></script>
-  <script>
-    CONFIG.videos.forEach(video => {
-      const el = document.createElement("div");
-      el.className = "col-12";
-      el.innerHTML = `
-        <div class="card">
-          <div class="card-body">
-            <h5>${video.title}</h5>
-            <a href="${video.link}" target="_blank" class="btn btn-outline-primary btn-sm">Guarda</a>
-          </div>
-        </div>`;
-      document.getElementById("videoContent").appendChild(el);
-    });
-  </script>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Torna alla Home</a>
+            <h2 class="header-title">
+                <span>🎬</span>
+                <span>Esperienze da vivere</span>
+            </h2>
+        </div>
+        
+        <div class="videos-container">
+            <div class="videos-grid" id="videoContent">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Caricamento video esperienze...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulazione del tuo CONFIG - sostituisci con la tua configurazione reale
+        const CONFIG = {
+            videos: [
+                {
+                    title: "Tour Virtual della Città Storica",
+                    link: "#",
+                    description: "Scopri i segreti e le storie affascinanti del centro storico con questa esperienza immersiva.",
+                    duration: "12 min"
+                },
+                {
+                    title: "Degustazione Vini Locali",
+                    link: "#",
+                    description: "Un viaggio sensoriale attraverso i migliori vini della regione con sommelier esperti.",
+                    duration: "18 min"
+                },
+                {
+                    title: "Cooking Class Tradizionale",
+                    link: "#",
+                    description: "Impara a cucinare i piatti tipici locali con chef rinomati in questa masterclass culinaria.",
+                    duration: "25 min"
+                },
+                {
+                    title: "Escursione Naturalistica",
+                    link: "#",
+                    description: "Esplora paesaggi mozzafiato e scopri la flora e fauna locale in questa avventura guidata.",
+                    duration: "30 min"
+                }
+            ]
+        };
+
+        function getRandomDuration() {
+            const durations = ['8 min', '12 min', '15 min', '20 min', '25 min', '30 min'];
+            return durations[Math.floor(Math.random() * durations.length)];
+        }
+
+        function loadVideos() {
+            const videoContainer = document.getElementById('videoContent');
+            
+            setTimeout(() => {
+                if (!CONFIG.videos || CONFIG.videos.length === 0) {
+                    videoContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🎬</div>
+                            <h3>Nessun video disponibile</h3>
+                            <p>Al momento non ci sono video esperienze, ma torneremo presto con contenuti entusiasmanti!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                videoContainer.innerHTML = '';
+                
+                CONFIG.videos.forEach((video, index) => {
+                    const videoElement = document.createElement('div');
+                    videoElement.className = 'video-card';
+                    
+                    const duration = video.duration || getRandomDuration();
+                    const description = video.description || `Scopri questa fantastica esperienza che ti porterà alla scoperta di luoghi unici e momenti indimenticabili.`;
+                    
+                    videoElement.innerHTML = `
+                        <div class="video-thumbnail">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="video-content">
+                            <h3 class="video-title">${video.title}</h3>
+                            <p class="video-description">${description}</p>
+                            <div class="video-actions">
+                                <a href="${video.link}" target="_blank" class="watch-btn">Guarda Ora</a>
+                                <span class="duration-badge">${duration}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    videoContainer.appendChild(videoElement);
+                });
+            }, 1200);
+        }
+
+        // Carica i video quando la pagina è pronta
+        document.addEventListener('DOMContentLoaded', loadVideos);
+    </script>
 </body>
 </html>
