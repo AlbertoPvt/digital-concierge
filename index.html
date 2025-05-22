@@ -14,7 +14,8 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -176,17 +177,18 @@
         /* Responsive design */
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 20px;
                 background-attachment: scroll;
+                align-items: flex-start;
+                padding-top: 60px;
             }
             
             .container {
                 padding: 32px 24px;
-                margin: 10px auto;
-                min-height: calc(100vh - 20px);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
+                margin: 0 auto;
+                max-height: 80vh;
+                width: calc(100% - 20px);
+                max-width: 400px;
             }
             
             .welcome-title {
