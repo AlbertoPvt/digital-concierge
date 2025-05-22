@@ -1,6 +1,8 @@
 body {
+  font-family: 'Helvetica Neue', sans-serif;
   background-color: #f8f9fa;
 }
+
 #chatBox div {
   margin-bottom: 10px;
 }
