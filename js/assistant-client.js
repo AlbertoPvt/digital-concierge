@@ -117,7 +117,7 @@ class AssistantClient {
 
 // Configurazione e utilizzo globale
 const CONFIG = {
-    assistantId: 'asst_YOUR_ASSISTANT_ID', // Sostituisci con il tuo ID
+    assistantId: 'asst_MJbYjWV8vQDmwetH0vVVNle5', 
     deals: [
         { name: "Pizzeria Bella", discount: "10% di sconto", link: "https://..." },
         { name: "Gelateria Marco", discount: "1 gelato omaggio", link: "https://..." },
