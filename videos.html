@@ -93,6 +93,7 @@
             position: relative;
             animation: cardSlide 0.6s ease-out;
             animation-fill-mode: both;
+            cursor: pointer;
         }
 
         .video-card:nth-child(1) { animation-delay: 0.1s; }
@@ -119,7 +120,8 @@
         .video-thumbnail {
             position: relative;
             height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-size: cover;
+            background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,35 +135,37 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease;
         }
 
         .video-card:hover .video-thumbnail::before {
-            opacity: 1;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .video-thumbnail.loading {
+            background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
         }
 
         .play-icon {
             width: 60px;
             height: 60px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: white;
+            color: #333;
             transition: all 0.3s ease;
             cursor: pointer;
+            z-index: 1;
+            position: relative;
         }
 
         .video-card:hover .play-icon {
             transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: white;
         }
 
         .video-content {
@@ -183,44 +187,11 @@
             margin-bottom: 20px;
         }
 
-        .video-actions {
+        .video-meta {
             display: flex;
             gap: 12px;
             align-items: center;
-        }
-
-        .watch-btn {
-            flex: 1;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .watch-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .watch-btn:hover::before {
-            left: 100%;
-        }
-
-        .watch-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            flex-wrap: wrap;
         }
 
         .duration-badge {
@@ -232,21 +203,70 @@
             font-weight: 500;
         }
 
-        /* Different gradient themes for cards */
-        .video-card:nth-child(4n+1) .video-thumbnail {
-            background: linear-gradient(135deg, #84fab0, #8fd3f4);
+        /* Video Modal */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .video-card:nth-child(4n+2) .video-thumbnail {
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        .video-modal.active {
+            display: flex;
         }
 
-        .video-card:nth-child(4n+3) .video-thumbnail {
-            background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .video-card:nth-child(4n+4) .video-thumbnail {
-            background: linear-gradient(135deg, #fecdd3, #fca5a5);
+        .video-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 960px;
+            aspect-ratio: 16/9;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.1);
+        }
+
+        .video-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
         }
 
         /* Loading state */
@@ -270,17 +290,13 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Empty state */
-        .empty-state {
+        /* Error state */
+        .error-state {
             text-align: center;
-            padding: 80px 20px;
-            color: #64748b;
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            padding: 40px 20px;
+            background: #fee2e2;
+            border-radius: 12px;
+            color: #dc2626;
         }
 
         /* Responsive design */
@@ -306,14 +322,13 @@
                 height: 180px;
             }
             
-            .video-content {
-                padding: 20px;
+            .video-modal-content {
+                width: 95%;
             }
             
-            .video-actions {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
+            .close-modal {
+                top: -35px;
+                font-size: 1.5rem;
             }
         }
 
@@ -363,52 +378,153 @@
         </div>
     </div>
 
+    <!-- Modal per il video -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <button class="close-modal" onclick="closeVideoModal()">✕</button>
+            <iframe class="video-iframe" id="videoFrame" 
+                    allow="autoplay; fullscreen; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
     <script>
-        // Simulazione del tuo CONFIG - sostituisci con la tua configurazione reale
+        // Configurazione con video Vimeo
         const CONFIG = {
             videos: [
                 {
                     title: "Tour Virtual della Città Storica",
-                    link: "#",
+                    vimeoId: "123456789", // Sostituisci con il tuo ID video Vimeo
                     description: "Scopri i segreti e le storie affascinanti del centro storico con questa esperienza immersiva.",
-                    duration: "12 min"
+                    duration: "12 min",
+                    thumbnail: null // Opzionale: URL personalizzato per thumbnail
                 },
                 {
                     title: "Degustazione Vini Locali",
-                    link: "#",
+                    vimeoId: "987654321", // Sostituisci con il tuo ID video Vimeo
                     description: "Un viaggio sensoriale attraverso i migliori vini della regione con sommelier esperti.",
-                    duration: "18 min"
+                    duration: "18 min",
+                    thumbnail: null
                 },
                 {
                     title: "Cooking Class Tradizionale",
-                    link: "#",
+                    vimeoId: "456789123", // Sostituisci con il tuo ID video Vimeo
                     description: "Impara a cucinare i piatti tipici locali con chef rinomati in questa masterclass culinaria.",
-                    duration: "25 min"
+                    duration: "25 min",
+                    thumbnail: null
                 },
                 {
                     title: "Escursione Naturalistica",
-                    link: "#",
+                    vimeoId: "789123456", // Sostituisci con il tuo ID video Vimeo
                     description: "Esplora paesaggi mozzafiato e scopri la flora e fauna locale in questa avventura guidata.",
-                    duration: "30 min"
+                    duration: "30 min",
+                    thumbnail: null
                 }
             ]
         };
 
-        function getRandomDuration() {
-            const durations = ['8 min', '12 min', '15 min', '20 min', '25 min', '30 min'];
-            return durations[Math.floor(Math.random() * durations.length)];
+        // Cache per le thumbnail di Vimeo
+        const thumbnailCache = {};
+
+        // Ottieni la thumbnail da Vimeo
+        async function getVimeoThumbnail(vimeoId) {
+            if (thumbnailCache[vimeoId]) {
+                return thumbnailCache[vimeoId];
+            }
+
+            try {
+                const response = await fetch(`https://vimeo.com/api/v2/video/${vimeoId}.json`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const thumbnail = data[0].thumbnail_large;
+                    thumbnailCache[vimeoId] = thumbnail;
+                    return thumbnail;
+                }
+            } catch (error) {
+                console.error('Errore nel recupero della thumbnail:', error);
+            }
+            
+            // Fallback: usa un placeholder
+            return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"%3E%3Crect fill="%23667eea" width="640" height="360"/%3E%3Cpath fill="%23fff" d="M320 150v60l52-30z"/%3E%3C/svg%3E';
         }
 
-        function loadVideos() {
+        // Apri il modal con il video Vimeo
+        function openVideo(vimeoId, title) {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoFrame');
+            
+            // Imposta l'URL del video Vimeo con parametri ottimizzati
+            iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&title=0&byline=0&portrait=0&color=667eea`;
+            
+            // Mostra il modal
+            modal.classList.add('active');
+            
+            // Previeni lo scroll del body
+            document.body.style.overflow = 'hidden';
+            
+            // Analytics (opzionale)
+            console.log(`Video aperto: ${title} (ID: ${vimeoId})`);
+        }
+
+        // Chiudi il modal
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoFrame');
+            
+            // Rimuovi il video
+            iframe.src = '';
+            
+            // Nascondi il modal
+            modal.classList.remove('active');
+            
+            // Ripristina lo scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        // Crea una card video
+        async function createVideoCard(video, index) {
+            const videoElement = document.createElement('div');
+            videoElement.className = 'video-card';
+            
+            // Ottieni la thumbnail
+            const thumbnailUrl = video.thumbnail || await getVimeoThumbnail(video.vimeoId);
+            
+            videoElement.innerHTML = `
+                <div class="video-thumbnail loading" id="thumb-${index}">
+                    <div class="play-icon">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">${video.title}</h3>
+                    <p class="video-description">${video.description}</p>
+                    <div class="video-meta">
+                        <span class="duration-badge">${video.duration}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Aggiungi click listener
+            videoElement.addEventListener('click', () => openVideo(video.vimeoId, video.title));
+            
+            // Carica la thumbnail dopo aver creato l'elemento
+            const thumbElement = videoElement.querySelector(`#thumb-${index}`);
+            thumbElement.style.backgroundImage = `url('${thumbnailUrl}')`;
+            thumbElement.classList.remove('loading');
+            
+            return videoElement;
+        }
+
+        // Carica i video
+        async function loadVideos() {
             const videoContainer = document.getElementById('videoContent');
             
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (!CONFIG.videos || CONFIG.videos.length === 0) {
                     videoContainer.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">🎬</div>
                             <h3>Nessun video disponibile</h3>
-                            <p>Al momento non ci sono video esperienze, ma torneremo presto con contenuti entusiasmanti!</p>
+                            <p>Al momento non ci sono video esperienze disponibili.</p>
                         </div>
                     `;
                     return;
@@ -416,31 +532,27 @@
 
                 videoContainer.innerHTML = '';
                 
-                CONFIG.videos.forEach((video, index) => {
-                    const videoElement = document.createElement('div');
-                    videoElement.className = 'video-card';
-                    
-                    const duration = video.duration || getRandomDuration();
-                    const description = video.description || `Scopri questa fantastica esperienza che ti porterà alla scoperta di luoghi unici e momenti indimenticabili.`;
-                    
-                    videoElement.innerHTML = `
-                        <div class="video-thumbnail">
-                            <div class="play-icon">▶</div>
-                        </div>
-                        <div class="video-content">
-                            <h3 class="video-title">${video.title}</h3>
-                            <p class="video-description">${description}</p>
-                            <div class="video-actions">
-                                <a href="${video.link}" target="_blank" class="watch-btn">Guarda Ora</a>
-                                <span class="duration-badge">${duration}</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    videoContainer.appendChild(videoElement);
-                });
+                // Crea le card video
+                for (let i = 0; i < CONFIG.videos.length; i++) {
+                    const videoCard = await createVideoCard(CONFIG.videos[i], i);
+                    videoContainer.appendChild(videoCard);
+                }
             }, 1200);
         }
+
+        // Chiudi il modal cliccando fuori
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVideoModal();
+            }
+        });
+
+        // Chiudi con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
 
         // Carica i video quando la pagina è pronta
         document.addEventListener('DOMContentLoaded', loadVideos);
