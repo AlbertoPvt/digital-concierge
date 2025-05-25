@@ -2,6 +2,8 @@
 // Funzione serverless per proteggere l'API key di OpenAI
 
 exports.handler = async (event, context) => {
+  console.log('Received request:', event.body);
+  
   // Configura CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
