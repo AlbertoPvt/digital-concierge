@@ -3,6 +3,7 @@
 
 exports.handler = async (event, context) => {
   console.log('Received request:', event.body);
+  let endpoint = '';
   
   // Configura CORS
   const headers = {
@@ -30,7 +31,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { endpoint, ...body } = JSON.parse(event.body);
+    const { endpoint: requestEndpoint, ...body } = JSON.parse(event.body);
+    endpoint = requestEndpoint;
     
     // Validazione endpoint
     const allowedEndpoints = [
@@ -76,6 +78,7 @@ exports.handler = async (event, context) => {
     });
 
     const data = await response.json();
+    console.log('OpenAI response:', response.status, data);
 
     return {
       statusCode: response.status,
@@ -84,11 +87,15 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error details:', error.message, error.response?.data || error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal server error' })
+      body: JSON.stringify({ 
+        error: 'Internal server error',
+        details: error.message,
+        endpoint: endpoint
+      })
     };
   }
 };
