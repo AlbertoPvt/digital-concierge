@@ -88,6 +88,8 @@ class AssistantClient {
 
     // Metodo generico per fare richieste tramite Netlify Function
     async makeRequest(endpoint, body = null) {
+        console.log('Making request to:', endpoint);
+      
         const response = await fetch(this.apiEndpoint, {
             method: 'POST',
             headers: {
