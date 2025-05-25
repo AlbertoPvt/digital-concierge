@@ -69,7 +69,7 @@ class AssistantClient {
 
         while (attempts < maxAttempts) {
             const run = await this.makeRequest(
-                `threads/${this.threadId}/runs/${runId}/retrieve`
+                `threads/${this.threadId}/runs/${runId}`
             );
 
             if (run.status === 'completed') {
