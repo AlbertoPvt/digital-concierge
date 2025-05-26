@@ -189,6 +189,15 @@
             transform: translateY(-2px);
         }
 
+        .btn-report {
+            background: #ffe082;
+            color: #5c5400;
+            border: 2px solid #f9d423;
+        }
+        .btn-report:hover {
+            background: #ffd54f;
+        }
+
         /* Category badges */
         .deal-category {
             display: inline-block;
@@ -438,8 +447,10 @@
 
     <!-- Configurazione deals specifica per sito -->
     <script src="js/deals-config-milano.js"></script>
-    
     <script>
+        // Controlla se ?admin=true è nell'URL
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+
         // Sistema di tracking
         const dealTracking = {
             getData: function() {
@@ -598,7 +609,8 @@
                     if (deal.category) {
                         dealElement.setAttribute('data-category', deal.category);
                     }
-                    
+
+                    // --- BLOCCO MODIFICATO: aggiunge il pulsante REPORT solo se isAdmin ---
                     dealElement.innerHTML = `
                         <div class="deal-header">
                             <div class="deal-icon">${deal.icon || '🎁'}</div>
@@ -617,9 +629,15 @@
                                     🌐 Visita Sito
                                 </button>
                             ` : ''}
+                            ${isAdmin ? `
+                                <button class="deal-btn btn-report" onclick='dealTracking.getReport()'>
+                                    📝 Report
+                                </button>
+                            ` : ''}
                         </div>
                     `;
-                    
+                    // ---------------------------------------------------------------
+
                     dealsContainer.appendChild(dealElement);
                 });
             } catch (error) {
