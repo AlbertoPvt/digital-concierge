@@ -123,8 +123,8 @@ class AssistantClient {
 // Funzione per caricare la configurazione specifica dell'hotel
 async function loadAssistantConfig() {
   // Metodo 1: Carica da file di configurazione esterno
-  if (typeof ASSISTANT_CONFIG !== "undefined") {
-    return ASSISTANT_CONFIG;
+  if (typeof window.ASSISTANT_CONFIG !== "undefined") {
+    return window.ASSISTANT_CONFIG;
   }
 
   // Metodo 2: Carica da file JSON basato sul dominio
