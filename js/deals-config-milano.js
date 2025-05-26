@@ -5,16 +5,14 @@ const DEALS_CONFIG = {
             discount: "Pizza omaggio ordinando menu completo",
             link: "https://pizzeriaspontini.it",
             icon: "🍕",
-            category: "ristorante",
-            coupon: "SPONTINI2025"
+            category: "ristorante"
         },
         {
             name: "Museo del Duomo",
             discount: "Ingresso ridotto del 50%",
             link: "https://museodelduomo.it",
             icon: "🏛️",
-            category: "cultura",
-            coupon: "DUOMO2025"
+            category: "cultura"
         }
     ]
 };
