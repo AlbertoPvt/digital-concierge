@@ -68,6 +68,13 @@
             gap: 16px;
         }
 
+        .hotel-name {
+            font-size: 1rem;
+            color: #64748b;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
         .deals-grid {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -163,21 +170,35 @@
             transform: translateX(4px);
         }
 
+        /* Category badges */
+        .deal-category {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            margin-top: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Deal type specific colors */
-        .deal-card:nth-child(4n+1) .deal-icon {
-            background: linear-gradient(135deg, rgba(132, 250, 176, 0.2), rgba(143, 211, 244, 0.2));
+        .deal-card[data-category="ristorante"] .deal-icon {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(254, 215, 170, 0.2));
         }
 
-        .deal-card:nth-child(4n+2) .deal-icon {
-            background: linear-gradient(135deg, rgba(255, 236, 210, 0.3), rgba(252, 182, 159, 0.3));
+        .deal-card[data-category="spa"] .deal-icon {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(196, 181, 253, 0.2));
         }
 
-        .deal-card:nth-child(4n+3) .deal-icon {
-            background: linear-gradient(135deg, rgba(196, 181, 253, 0.2), rgba(167, 139, 250, 0.2));
+        .deal-card[data-category="tour"] .deal-icon {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(110, 231, 183, 0.2));
         }
 
-        .deal-card:nth-child(4n+4) .deal-icon {
-            background: linear-gradient(135deg, rgba(254, 205, 211, 0.2), rgba(252, 165, 165, 0.2));
+        .deal-card[data-category="shopping"] .deal-icon {
+            background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(252, 165, 165, 0.2));
         }
 
         /* Loading state */
@@ -199,6 +220,20 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fee2e2;
+            border-radius: 16px;
+            color: #dc2626;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
         }
 
         /* Empty state */
@@ -274,6 +309,7 @@
                 <span>🎁</span>
                 <span>Offerte nei dintorni</span>
             </h2>
+            <p class="hotel-name" id="hotelName"></p>
         </div>
         
         <div class="deals-grid" id="dealsContent">
@@ -284,47 +320,54 @@
         </div>
     </div>
 
+    <!-- Configurazione deals specifica per sito -->
+    <script src="js/deals-config.js"></script>
+    
     <script>
-        // Simulazione del tuo CONFIG - sostituisci con la tua configurazione reale
-        const CONFIG = {
-            deals: [
-                {
-                    name: "Ristorante Il Borgo",
-                    discount: "Sconto del 20% su tutti i piatti",
-                    link: "#",
-                    icon: "🍝"
-                },
-                {
-                    name: "Spa Wellness Center",
-                    discount: "Massaggio rilassante a €35 invece di €50",
-                    link: "#",
-                    icon: "💆"
-                },
-                {
-                    name: "Tour Guidato della Città",
-                    discount: "Tour gratuito con guida locale",
-                    link: "#",
-                    icon: "🏛️"
-                },
-                {
-                    name: "Noleggio Biciclette",
-                    discount: "Prima giornata gratuita",
-                    link: "#",
-                    icon: "🚲"
+        // Sistema di caricamento deals multi-sito
+        async function loadDealsConfig() {
+            // Metodo 1: Carica da file esterno deals-config.js
+            if (typeof DEALS_CONFIG !== 'undefined') {
+                return DEALS_CONFIG;
+            }
+            
+            // Metodo 2: Carica da JSON basato sul dominio
+            try {
+                const hostname = window.location.hostname;
+                const siteName = hostname.split('.')[0]; // es: 'hotel-roma'
+                
+                const response = await fetch(`/configs/${siteName}-deals.json`);
+                if (response.ok) {
+                    return await response.json();
                 }
-            ]
-        };
-
-        function getRandomIcon() {
-            const icons = ['🍕', '🍷', '🎨', '🛍️', '☕', '🎭', '🏊', '⛱️', '🎪', '🎵'];
-            return icons[Math.floor(Math.random() * icons.length)];
+            } catch (error) {
+                console.error('Errore caricamento configurazione:', error);
+            }
+            
+            // Fallback: configurazione di default
+            return {
+                hotelName: "Hotel",
+                deals: []
+            };
         }
 
-        function loadDeals() {
+        async function loadDeals() {
             const dealsContainer = document.getElementById('dealsContent');
+            const hotelNameEl = document.getElementById('hotelName');
             
-            setTimeout(() => {
-                if (!CONFIG.deals || CONFIG.deals.length === 0) {
+            try {
+                // Carica la configurazione
+                const config = await loadDealsConfig();
+                
+                // Mostra il nome dell'hotel
+                if (config.hotelName) {
+                    hotelNameEl.textContent = config.hotelName;
+                }
+                
+                // Simula un caricamento
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                if (!config.deals || config.deals.length === 0) {
                     dealsContainer.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">🎁</div>
@@ -337,26 +380,45 @@
 
                 dealsContainer.innerHTML = '';
                 
-                CONFIG.deals.forEach((deal, index) => {
+                config.deals.forEach((deal, index) => {
                     const dealElement = document.createElement('a');
-                    dealElement.href = deal.link;
+                    dealElement.href = deal.link || '#';
                     dealElement.className = 'deal-card';
                     dealElement.style.animationDelay = `${index * 0.1}s`;
                     
-                    const icon = deal.icon || getRandomIcon();
+                    // Aggiungi categoria come data attribute
+                    if (deal.category) {
+                        dealElement.setAttribute('data-category', deal.category);
+                    }
+                    
+                    // Se è un link esterno, apri in nuova scheda
+                    if (deal.link && deal.link.startsWith('http')) {
+                        dealElement.target = '_blank';
+                        dealElement.rel = 'noopener noreferrer';
+                    }
                     
                     dealElement.innerHTML = `
-                        <div class="deal-icon">${icon}</div>
+                        <div class="deal-icon">${deal.icon || '🎁'}</div>
                         <div class="deal-content">
                             <div class="deal-name">${deal.name}</div>
                             <div class="deal-discount">${deal.discount}</div>
+                            ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
                         </div>
                         <div class="deal-arrow">→</div>
                     `;
                     
                     dealsContainer.appendChild(dealElement);
                 });
-            }, 1000);
+            } catch (error) {
+                console.error('Errore caricamento deals:', error);
+                dealsContainer.innerHTML = `
+                    <div class="error-state">
+                        <div class="error-icon">⚠️</div>
+                        <h3>Errore nel caricamento</h3>
+                        <p>Non è stato possibile caricare le offerte. Riprova più tardi.</p>
+                    </div>
+                `;
+            }
         }
 
         // Carica le offerte quando la pagina è pronta
