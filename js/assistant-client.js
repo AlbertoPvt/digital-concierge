@@ -66,7 +66,7 @@ class AssistantClient {
 
   // Attendi che il run sia completato
   async waitForCompletion(runId) {
-    const maxAttempts = 30;
+    const maxAttempts = 60; // Aumentato per risposte più lunghe
     let attempts = 0;
 
     while (attempts < maxAttempts) {
@@ -120,34 +120,55 @@ class AssistantClient {
   }
 }
 
-// Configurazione e utilizzo globale
-const CONFIG = {
-  assistantId: "asst_MJbYjWV8vQDmwetH0vVVNle5",
-  deals: [
-    { name: "Pizzeria Bella", discount: "10% di sconto", link: "https://..." },
-    {
-      name: "Gelateria Marco",
-      discount: "1 gelato omaggio",
-      link: "https://...",
-    },
-  ],
-  videos: [
-    { title: "Come fare la pasta fresca", link: "https://youtube.com/..." },
-  ],
-};
+// Funzione per caricare la configurazione specifica dell'hotel
+async function loadAssistantConfig() {
+  // Metodo 1: Carica da file di configurazione esterno
+  if (typeof ASSISTANT_CONFIG !== 'undefined') {
+    return ASSISTANT_CONFIG;
+  }
+  
+  // Metodo 2: Carica da file JSON basato sul dominio
+  try {
+    const hostname = window.location.hostname;
+    const hotelName = hostname.split('.')[0]; // es: 'hotel-milano'
+    
+    const response = await fetch(`/configs/${hotelName}-assistant.json`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error('Errore caricamento configurazione assistant:', error);
+  }
+  
+  // Fallback: configurazione di default
+  throw new Error('Configurazione assistant non trovata. Aggiungi ASSISTANT_CONFIG o il file di configurazione.');
+}
 
-// Istanza globale del client
+// Variabili globali
 let assistant = null;
 let isWaitingForResponse = false;
 
 // Inizializza l'assistant quando la pagina è pronta
 async function initializeAssistant() {
   try {
+    // Carica la configurazione specifica dell'hotel
+    const config = await loadAssistantConfig();
+    
     assistant = new AssistantClient({
-      assistantId: CONFIG.assistantId,
+      assistantId: config.assistantId,
     });
+    
     await assistant.initialize();
     updateConnectionStatus(true);
+    
+    // Se c'è un messaggio di benvenuto personalizzato
+    if (config.welcomeMessage) {
+      const chatBox = document.getElementById("chatBox");
+      if (chatBox && chatBox.children.length === 0) {
+        addMessage(config.welcomeMessage, "bot");
+      }
+    }
+    
   } catch (error) {
     console.error("Errore inizializzazione:", error);
     showError("Errore di connessione. Ricarica la pagina per riprovare.");
@@ -280,10 +301,21 @@ window.sendMessage = sendMessage;
 window.resetConversation = async () => {
   if (assistant) {
     await assistant.resetConversation();
-    document.getElementById("chatBox").innerHTML = `
-            <div class="message bot-message">
-                Conversazione resettata. Come posso aiutarti?
-            </div>
-        `;
+    
+    // Ricarica la configurazione per il messaggio di benvenuto
+    try {
+      const config = await loadAssistantConfig();
+      document.getElementById("chatBox").innerHTML = `
+        <div class="message bot-message">
+          ${config.resetMessage || 'Conversazione resettata. Come posso aiutarti?'}
+        </div>
+      `;
+    } catch (error) {
+      document.getElementById("chatBox").innerHTML = `
+        <div class="message bot-message">
+          Conversazione resettata. Come posso aiutarti?
+        </div>
+      `;
+    }
   }
 };
