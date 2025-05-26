@@ -163,7 +163,11 @@
             color: #94a3b8;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            display: none; /* Non più visibile con i bottoni */
+        }
+
+        .deal-card:hover .deal-arrow {
+            color: #667eea;
+            transform: translateX(4px);
         }
 
         /* Category badges */
@@ -296,14 +300,6 @@
             }
         }
     </style>
-    <!-- Google Analytics 4 gtag.js (modifica G-XXXXXXXXXX con il tuo ID) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
 </head>
 <body>
     <div class="container">
@@ -326,89 +322,20 @@
 
     <!-- Configurazione deals specifica per sito -->
     <script src="js/deals-config-milano.js"></script>
+    
     <script>
-        // Tracciamento eventi (modifica se usi un altro sistema)
-        function trackEvent(eventName, deal) {
-            if (window.gtag) {
-                gtag('event', eventName, {
-                    'deal_name': deal.name,
-                    'deal_category': deal.category || '',
-                    'deal_link': deal.link || '',
-                    'hotel': document.getElementById('hotelName')?.textContent || ''
-                });
-            } else {
-                // Fallback debug
-                console.log("Track event:", eventName, deal);
-            }
-        }
-
-        // Mostra modal con coupon
-        function showCouponModal(couponText) {
-            let modal = document.createElement('div');
-            modal.style = `
-                position:fixed;top:0;left:0;width:100vw;height:100vh;
-                background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;
-            `;
-            modal.innerHTML = `
-                <div style="background:white;padding:32px 24px;border-radius:16px;text-align:center;max-width:90vw;">
-                    <h2 style="margin-bottom:16px;">🎫 Coupon</h2>
-                    <p style="font-size:1.3rem;font-weight:600;margin-bottom:24px;">${couponText}</p>
-                    <button id="closeCouponModal" style="padding:8px 18px;border-radius:8px;background:#667eea;color:white;border:none;font-weight:500;">Chiudi</button>
-                </div>
-            `;
-            modal.querySelector("#closeCouponModal").onclick = () => document.body.removeChild(modal);
-            document.body.appendChild(modal);
-        }
-
-        // Crea una card deal con due bottoni
-        function renderDeal(deal, index) {
-            const dealElement = document.createElement('div');
-            dealElement.className = 'deal-card';
-            dealElement.setAttribute('data-category', deal.category || '');
-            dealElement.style.animationDelay = `${index * 0.1}s`;
-
-            // Icona e info
-            const dealIcon = `<div class="deal-icon">${deal.icon || '🎁'}</div>`;
-            const dealContent = `
-                <div class="deal-content">
-                    <div class="deal-name">${deal.name}</div>
-                    <div class="deal-discount">${deal.discount}</div>
-                    ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
-                </div>
-            `;
-            const actions = `
-                <div style="display:flex;gap:12px;flex-direction:column;">
-                    <button class="coupon-btn" style="padding:10px 16px;border-radius:8px;background:#667eea;color:white;border:none;font-weight:500;cursor:pointer;">Visualizza coupon</button>
-                    <button class="website-btn" style="padding:10px 16px;border-radius:8px;background:#fff;color:#667eea;border:1px solid #667eea;font-weight:500;cursor:pointer;">Vai al sito</button>
-                </div>
-            `;
-            dealElement.innerHTML = dealIcon + dealContent + actions;
-
-            // Visualizza coupon
-            dealElement.querySelector('.coupon-btn').onclick = function() {
-                showCouponModal(deal.coupon || 'Presenta questa schermata al negozio');
-                trackEvent('view_coupon', deal);
-            };
-
-            // Vai al sito
-            dealElement.querySelector('.website-btn').onclick = function() {
-                trackEvent('visit_website', deal);
-                if (deal.link) {
-                    window.open(deal.link, '_blank', 'noopener');
-                }
-            };
-
-            return dealElement;
-        }
-
-        // Caricamento deals multi-sito
+        // Sistema di caricamento deals multi-sito
         async function loadDealsConfig() {
+            // Metodo 1: Carica da file esterno deals-config.js
             if (typeof DEALS_CONFIG !== 'undefined') {
                 return DEALS_CONFIG;
             }
+            
+            // Metodo 2: Carica da JSON basato sul dominio
             try {
                 const hostname = window.location.hostname;
-                const siteName = hostname.split('.')[0];
+                const siteName = hostname.split('.')[0]; // es: 'hotel-roma'
+                
                 const response = await fetch(`/configs/${siteName}-deals.json`);
                 if (response.ok) {
                     return await response.json();
@@ -416,6 +343,8 @@
             } catch (error) {
                 console.error('Errore caricamento configurazione:', error);
             }
+            
+            // Fallback: configurazione di default
             return {
                 hotelName: "Hotel",
                 deals: []
@@ -425,13 +354,19 @@
         async function loadDeals() {
             const dealsContainer = document.getElementById('dealsContent');
             const hotelNameEl = document.getElementById('hotelName');
+            
             try {
+                // Carica la configurazione
                 const config = await loadDealsConfig();
+                
+                // Mostra il nome dell'hotel
                 if (config.hotelName) {
                     hotelNameEl.textContent = config.hotelName;
                 }
+                
+                // Simula un caricamento
                 await new Promise(resolve => setTimeout(resolve, 1000));
-
+                
                 if (!config.deals || config.deals.length === 0) {
                     dealsContainer.innerHTML = `
                         <div class="empty-state">
@@ -442,9 +377,37 @@
                     `;
                     return;
                 }
+
                 dealsContainer.innerHTML = '';
+                
                 config.deals.forEach((deal, index) => {
-                    dealsContainer.appendChild(renderDeal(deal, index));
+                    const dealElement = document.createElement('a');
+                    dealElement.href = deal.link || '#';
+                    dealElement.className = 'deal-card';
+                    dealElement.style.animationDelay = `${index * 0.1}s`;
+                    
+                    // Aggiungi categoria come data attribute
+                    if (deal.category) {
+                        dealElement.setAttribute('data-category', deal.category);
+                    }
+                    
+                    // Se è un link esterno, apri in nuova scheda
+                    if (deal.link && deal.link.startsWith('http')) {
+                        dealElement.target = '_blank';
+                        dealElement.rel = 'noopener noreferrer';
+                    }
+                    
+                    dealElement.innerHTML = `
+                        <div class="deal-icon">${deal.icon || '🎁'}</div>
+                        <div class="deal-content">
+                            <div class="deal-name">${deal.name}</div>
+                            <div class="deal-discount">${deal.discount}</div>
+                            ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
+                        </div>
+                        <div class="deal-arrow">→</div>
+                    `;
+                    
+                    dealsContainer.appendChild(dealElement);
                 });
             } catch (error) {
                 console.error('Errore caricamento deals:', error);
@@ -457,6 +420,8 @@
                 `;
             }
         }
+
+        // Carica le offerte quando la pagina è pronta
         document.addEventListener('DOMContentLoaded', loadDeals);
     </script>
 </body>
