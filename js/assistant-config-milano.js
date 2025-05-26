@@ -11,3 +11,5 @@ const ASSISTANT_CONFIG = {
   // Messaggio quando si resetta la conversazione (opzionale)
   resetMessage: "Ho cancellato la nostra conversazione precedente. Come posso aiutarti ora?"
 };
+
+window.ASSISTANT_CONFIG = ASSISTANT_CONFIG;

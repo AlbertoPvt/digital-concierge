@@ -123,25 +123,27 @@ class AssistantClient {
 // Funzione per caricare la configurazione specifica dell'hotel
 async function loadAssistantConfig() {
   // Metodo 1: Carica da file di configurazione esterno
-  if (typeof ASSISTANT_CONFIG !== 'undefined') {
+  if (typeof ASSISTANT_CONFIG !== "undefined") {
     return ASSISTANT_CONFIG;
   }
-  
+
   // Metodo 2: Carica da file JSON basato sul dominio
   try {
     const hostname = window.location.hostname;
-    const hotelName = hostname.split('.')[0]; // es: 'hotel-milano'
-    
+    const hotelName = hostname.split(".")[0]; // es: 'hotel-milano'
+
     const response = await fetch(`/configs/${hotelName}-assistant.json`);
     if (response.ok) {
       return await response.json();
     }
   } catch (error) {
-    console.error('Errore caricamento configurazione assistant:', error);
+    console.error("Errore caricamento configurazione assistant:", error);
   }
-  
+
   // Fallback: configurazione di default
-  throw new Error('Configurazione assistant non trovata. Aggiungi ASSISTANT_CONFIG o il file di configurazione.');
+  throw new Error(
+    "Configurazione assistant non trovata. Aggiungi ASSISTANT_CONFIG o il file di configurazione."
+  );
 }
 
 // Variabili globali
@@ -153,14 +155,14 @@ async function initializeAssistant() {
   try {
     // Carica la configurazione specifica dell'hotel
     const config = await loadAssistantConfig();
-    
+
     assistant = new AssistantClient({
       assistantId: config.assistantId,
     });
-    
+
     await assistant.initialize();
     updateConnectionStatus(true);
-    
+
     // Se c'è un messaggio di benvenuto personalizzato
     if (config.welcomeMessage) {
       const chatBox = document.getElementById("chatBox");
@@ -168,7 +170,6 @@ async function initializeAssistant() {
         addMessage(config.welcomeMessage, "bot");
       }
     }
-    
   } catch (error) {
     console.error("Errore inizializzazione:", error);
     showError("Errore di connessione. Ricarica la pagina per riprovare.");
@@ -301,13 +302,16 @@ window.sendMessage = sendMessage;
 window.resetConversation = async () => {
   if (assistant) {
     await assistant.resetConversation();
-    
+
     // Ricarica la configurazione per il messaggio di benvenuto
     try {
       const config = await loadAssistantConfig();
       document.getElementById("chatBox").innerHTML = `
         <div class="message bot-message">
-          ${config.resetMessage || 'Conversazione resettata. Come posso aiutarti?'}
+          ${
+            config.resetMessage ||
+            "Conversazione resettata. Come posso aiutarti?"
+          }
         </div>
       `;
     } catch (error) {
