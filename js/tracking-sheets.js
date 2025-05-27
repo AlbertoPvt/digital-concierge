@@ -3,10 +3,10 @@
 // Configurazione NoCodeAPI
 const SHEETS_CONFIG = {
     // Sostituisci con il tuo endpoint NoCodeAPI
-    apiEndpoint: 'https://v1.nocodeapi.com/TUO_USERNAME/google_sheets/TUO_API_ID',
+    apiEndpoint: 'https://v1.nocodeapi.com/albertopvt/google_sheets/XVfVXrIHiPekMIKj?tabId=TrackingSheet',
     
     // Tab/foglio dove salvare i dati
-    tabName: 'tracking', // Nome del foglio in Google Sheets
+    tabName: 'TrackingSheet', // Nome del foglio in Google Sheets
     
     // Headers del tuo Google Sheet (devono corrispondere esattamente)
     // Esempio colonne: Data | Ora | Hotel | Deal | Azione | Codice Coupon
