@@ -439,55 +439,7 @@
     <script src="js/deals-config-milano.js"></script>
     
     <script>
-        // Sistema di tracking
-        const dealTracking = {
-            getData: function() {
-                const saved = localStorage.getItem('dealTrackingData');
-                return saved ? JSON.parse(saved) : {};
-            },
-            
-            saveData: function(data) {
-                localStorage.setItem('dealTrackingData', JSON.stringify(data));
-            },
-            
-            track: function(dealName, action) {
-                const data = this.getData();
-                const today = new Date().toISOString().split('T')[0];
-                
-                if (!data[dealName]) {
-                    data[dealName] = {};
-                }
-                
-                if (!data[dealName][action]) {
-                    data[dealName][action] = {};
-                }
-                
-                if (!data[dealName][action][today]) {
-                    data[dealName][action][today] = 0;
-                }
-                
-                data[dealName][action][today]++;
-                this.saveData(data);
-                
-                console.log(`Tracked: ${dealName} - ${action} - Total today: ${data[dealName][action][today]}`);
-            },
-            
-            getReport: function() {
-                const data = this.getData();
-                console.log('=== DEAL TRACKING REPORT ===');
-                Object.keys(data).forEach(dealName => {
-                    console.log(`\n${dealName}:`);
-                    Object.keys(data[dealName]).forEach(action => {
-                        console.log(`  ${action}:`);
-                        Object.keys(data[dealName][action]).forEach(date => {
-                            console.log(`    ${date}: ${data[dealName][action][date]}`);
-                        });
-                    });
-                });
-                return data;
-            }
-        };
-
+      
         // Generatore di codici coupon
         function generateCouponCode(dealName, hotelName) {
             const date = new Date();
@@ -511,9 +463,6 @@
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            // Traccia visualizzazione coupon
-            dealTracking.track(deal.name, 'coupon_views');
         }
 
         // Chiudi modal
@@ -526,8 +475,6 @@
         // Visita sito web
         function visitWebsite(deal) {
             if (deal.link) {
-                // Traccia click su sito web
-                dealTracking.track(deal.name, 'website_clicks');
                 window.open(deal.link, '_blank');
             }
         }
@@ -636,9 +583,7 @@
                 closeCouponModal();
             }
         });
-        
-        // Rendi disponibile per debug
-        window.dealTracking = dealTracking;
+
     </script>
 </body>
 </html>
