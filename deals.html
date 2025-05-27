@@ -602,11 +602,11 @@
                             </div>
                         </div>
                         <div class="deal-actions">
-                            <button class="deal-btn btn-coupon" onclick='showCouponWithTracking(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
+                            <button class="deal-btn btn-coupon" onclick='showCoupon(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
                                 🎟️ Mostra Coupon
                             </button>
                             ${deal.link ? `
-                                <button class="deal-btn btn-website" onclick='visitWebsiteWithTracking(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>
+                                <button class="deal-btn btn-website" onclick='visitWebsite(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>
                                     🌐 Visita Sito
                                 </button>
                             ` : ''}
