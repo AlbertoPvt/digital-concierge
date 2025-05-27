@@ -1,669 +1,687 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Offerte Locali</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      . * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
 
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        animation: slideUp 0.8s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px 24px 0 0;
+        padding: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: none;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 20px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(102, 126, 234, 0.2);
+        transform: translateX(-4px);
+      }
+
+      .header-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .hotel-name {
+        font-size: 1rem;
+        color: #64748b;
+        margin-top: 8px;
+        font-weight: 400;
+      }
+
+      .deals-grid {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 0 0 24px 24px;
+        padding: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-top: none;
+        display: grid;
+        gap: 20px;
+      }
+
+      .deal-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .deal-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        border-color: rgba(102, 126, 234, 0.2);
+      }
+
+      .deal-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 16px;
+      }
+
+      .deal-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.1),
+          rgba(118, 75, 162, 0.1)
+        );
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+      }
+
+      .deal-card:hover .deal-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .deal-content {
+        flex: 1;
+      }
+
+      .deal-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        line-height: 1.3;
+      }
+
+      .deal-discount {
+        font-size: 1rem;
+        color: #64748b;
+        line-height: 1.5;
+      }
+
+      .deal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .deal-btn {
+        flex: 1;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-coupon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-coupon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-website {
+        background: white;
+        color: #667eea;
+        border: 2px solid #e2e8f0;
+      }
+
+      .btn-website:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      /* Category badges */
+      .deal-category {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        margin-top: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Deal type specific colors */
+      .deal-card[data-category="ristorante"] .deal-icon {
+        background: linear-gradient(
+          135deg,
+          rgba(251, 146, 60, 0.2),
+          rgba(254, 215, 170, 0.2)
+        );
+      }
+
+      .deal-card[data-category="spa"] .deal-icon {
+        background: linear-gradient(
+          135deg,
+          rgba(167, 139, 250, 0.2),
+          rgba(196, 181, 253, 0.2)
+        );
+      }
+
+      .deal-card[data-category="tour"] .deal-icon {
+        background: linear-gradient(
+          135deg,
+          rgba(52, 211, 153, 0.2),
+          rgba(110, 231, 183, 0.2)
+        );
+      }
+
+      .deal-card[data-category="shopping"] .deal-icon {
+        background: linear-gradient(
+          135deg,
+          rgba(251, 113, 133, 0.2),
+          rgba(252, 165, 165, 0.2)
+        );
+      }
+
+      /* Modal per coupon */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 24px;
+        padding: 32px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+        animation: modalSlide 0.3s ease-out;
+      }
+
+      @keyframes modalSlide {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #64748b;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: #f3f4f6;
+        color: #1e293b;
+      }
+
+      .coupon-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 16px;
+      }
+
+      .coupon-code {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 20px;
+        border-radius: 16px;
+        margin: 20px 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-family: monospace;
+      }
+
+      .coupon-instructions {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+
+      .coupon-validity {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-top: 16px;
+      }
+
+      /* Loading state */
+      .loading {
+        text-align: center;
+        padding: 40px;
+        color: #64748b;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(102, 126, 234, 0.1);
+        border-top-color: #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Error state */
+      .error-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #fee2e2;
+        border-radius: 16px;
+        color: #dc2626;
+      }
+
+      .error-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+      }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #64748b;
+      }
+
+      .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
         .container {
-            max-width: 900px;
-            margin: 0 auto;
-            animation: slideUp 0.8s ease-out;
+          margin: 10px;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px 24px 0 0;
-            padding: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-bottom: none;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 20px;
-            padding: 10px 16px;
-            border-radius: 12px;
-            background: rgba(102, 126, 234, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateX(-4px);
+        .header,
+        .deals-grid {
+          padding: 24px 20px;
         }
 
         .header-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .hotel-name {
-            font-size: 1rem;
-            color: #64748b;
-            margin-top: 8px;
-            font-weight: 400;
-        }
-
-        .deals-grid {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 0 0 24px 24px;
-            padding: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-top: none;
-            display: grid;
-            gap: 20px;
-        }
-
-        .deal-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .deal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            border-color: rgba(102, 126, 234, 0.2);
-        }
-
-        .deal-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 16px;
-        }
-
-        .deal-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-        }
-
-        .deal-card:hover .deal-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .deal-content {
-            flex: 1;
-        }
-
-        .deal-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        .deal-discount {
-            font-size: 1rem;
-            color: #64748b;
-            line-height: 1.5;
+          font-size: 1.8rem;
         }
 
         .deal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
+          flex-direction: column;
         }
 
         .deal-btn {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
         }
 
-        .btn-coupon {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .header,
+        .deals-grid {
+          padding: 20px 16px;
         }
 
-        .btn-coupon:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-website {
-            background: white;
-            color: #667eea;
-            border: 2px solid #e2e8f0;
-        }
-
-        .btn-website:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-        }
-
-        .btn-report {
-            background: #ffe082;
-            color: #5c5400;
-            border: 2px solid #f9d423;
-        }
-        .btn-report:hover {
-            background: #ffd54f;
-        }
-
-        /* Category badges */
-        .deal-category {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            margin-top: 8px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Deal type specific colors */
-        .deal-card[data-category="ristorante"] .deal-icon {
-            background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(254, 215, 170, 0.2));
-        }
-
-        .deal-card[data-category="spa"] .deal-icon {
-            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(196, 181, 253, 0.2));
-        }
-
-        .deal-card[data-category="tour"] .deal-icon {
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(110, 231, 183, 0.2));
-        }
-
-        .deal-card[data-category="shopping"] .deal-icon {
-            background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(252, 165, 165, 0.2));
-        }
-
-        /* Modal per coupon */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
+        .header-title {
+          font-size: 1.6rem;
+          gap: 12px;
         }
 
         .modal-content {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            position: relative;
-            animation: modalSlide 0.3s ease-out;
-        }
-
-        @keyframes modalSlide {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .modal-close:hover {
-            background: #f3f4f6;
-            color: #1e293b;
-        }
-
-        .coupon-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 16px;
+          padding: 24px;
         }
 
         .coupon-code {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 20px 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            font-family: monospace;
+          font-size: 1.4rem;
+          padding: 16px;
         }
-
-        .coupon-instructions {
-            color: #64748b;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        .coupon-validity {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 16px;
-        }
-
-        /* Loading state */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(102, 126, 234, 0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Error state */
-        .error-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: #fee2e2;
-            border-radius: 16px;
-            color: #dc2626;
-        }
-
-        .error-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-        }
-
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-            }
-            
-            .header, .deals-grid {
-                padding: 24px 20px;
-            }
-            
-            .header-title {
-                font-size: 1.8rem;
-            }
-            
-            .deal-actions {
-                flex-direction: column;
-            }
-            
-            .deal-btn {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            .header, .deals-grid {
-                padding: 20px 16px;
-            }
-            
-            .header-title {
-                font-size: 1.6rem;
-                gap: 12px;
-            }
-            
-            .modal-content {
-                padding: 24px;
-            }
-            
-            .coupon-code {
-                font-size: 1.4rem;
-                padding: 16px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <a href="index.html" class="back-btn">← Torna alla Home</a>
-            <h2 class="header-title">
-                <span>🎁</span>
-                <span>Offerte nei dintorni</span>
-            </h2>
-            <p class="hotel-name" id="hotelName"></p>
+      <div class="header">
+        <a href="index.html" class="back-btn">← Torna alla Home</a>
+        <h2 class="header-title">
+          <span>🎁</span>
+          <span>Offerte nei dintorni</span>
+        </h2>
+        <p class="hotel-name" id="hotelName"></p>
+      </div>
+
+      <div class="deals-grid" id="dealsContent">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <p>Caricamento offerte...</p>
         </div>
-        
-        <div class="deals-grid" id="dealsContent">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Caricamento offerte...</p>
-            </div>
-        </div>
+      </div>
     </div>
 
     <!-- Modal per coupon -->
     <div class="modal" id="couponModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeCouponModal()">✕</button>
-            <h3 class="coupon-title" id="couponTitle"></h3>
-            <p class="coupon-instructions" id="couponInstructions"></p>
-            <div class="coupon-code" id="couponCode"></div>
-            <p class="coupon-validity" id="couponValidity"></p>
-        </div>
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeCouponModal()">✕</button>
+        <h3 class="coupon-title" id="couponTitle"></h3>
+        <p class="coupon-instructions" id="couponInstructions"></p>
+        <div class="coupon-code" id="couponCode"></div>
+        <p class="coupon-validity" id="couponValidity"></p>
+      </div>
     </div>
 
     <!-- Configurazione deals specifica per sito -->
     <script src="js/deals-config-milano.js"></script>
+
     <script>
-        // Controlla se ?admin=true è nell'URL
-        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+      // Sistema di tracking
+      const dealTracking = {
+          getData: function() {
+              const saved = localStorage.getItem('dealTrackingData');
+              return saved ? JSON.parse(saved) : {};
+          },
 
-        // Sistema di tracking
-        const dealTracking = {
-            getData: function() {
-                const saved = localStorage.getItem('dealTrackingData');
-                return saved ? JSON.parse(saved) : {};
-            },
-            
-            saveData: function(data) {
-                localStorage.setItem('dealTrackingData', JSON.stringify(data));
-            },
-            
-            track: function(dealName, action) {
-                const data = this.getData();
-                const today = new Date().toISOString().split('T')[0];
-                
-                if (!data[dealName]) {
-                    data[dealName] = {};
-                }
-                
-                if (!data[dealName][action]) {
-                    data[dealName][action] = {};
-                }
-                
-                if (!data[dealName][action][today]) {
-                    data[dealName][action][today] = 0;
-                }
-                
-                data[dealName][action][today]++;
-                this.saveData(data);
-                
-                console.log(`Tracked: ${dealName} - ${action} - Total today: ${data[dealName][action][today]}`);
-            },
-            
-            getReport: function() {
-                const data = this.getData();
-                console.log('=== DEAL TRACKING REPORT ===');
-                Object.keys(data).forEach(dealName => {
-                    console.log(`\n${dealName}:`);
-                    Object.keys(data[dealName]).forEach(action => {
-                        console.log(`  ${action}:`);
-                        Object.keys(data[dealName][action]).forEach(date => {
-                            console.log(`    ${date}: ${data[dealName][action][date]}`);
-                        });
-                    });
-                });
-                return data;
-            }
-        };
+          saveData: function(data) {
+              localStorage.setItem('dealTrackingData', JSON.stringify(data));
+          },
 
-        // Generatore di codici coupon
-        function generateCouponCode(dealName, hotelName) {
-            const date = new Date();
-            const dateStr = date.getFullYear().toString().substr(2) + 
-                           (date.getMonth() + 1).toString().padStart(2, '0') +
-                           date.getDate().toString().padStart(2, '0');
-            const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
-            const prefix = (hotelName || 'HOTEL').substring(0, 3).toUpperCase();
-            return `${prefix}${dateStr}${random}`;
-        }
+          track: function(dealName, action) {
+              const data = this.getData();
+              const today = new Date().toISOString().split('T')[0];
 
-        // Mostra modal coupon
-        function showCoupon(deal, hotelName) {
-            const modal = document.getElementById('couponModal');
-            const code = generateCouponCode(deal.name, hotelName);
-            
-            document.getElementById('couponTitle').textContent = deal.name;
-            document.getElementById('couponInstructions').textContent = 'Mostra questo codice per ottenere:';
-            document.getElementById('couponCode').textContent = code;
-            document.getElementById('couponValidity').textContent = `Codice valido per 30 giorni dalla generazione`;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Traccia visualizzazione coupon
-            dealTracking.track(deal.name, 'coupon_views');
-        }
+              if (!data[dealName]) {
+                  data[dealName] = {};
+              }
 
-        // Chiudi modal
-        function closeCouponModal() {
-            const modal = document.getElementById('couponModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+              if (!data[dealName][action]) {
+                  data[dealName][action] = {};
+              }
 
-        // Visita sito web
-        function visitWebsite(deal) {
-            if (deal.link) {
-                // Traccia click su sito web
-                dealTracking.track(deal.name, 'website_clicks');
-                window.open(deal.link, '_blank');
-            }
-        }
+              if (!data[dealName][action][today]) {
+                  data[dealName][action][today] = 0;
+              }
 
-        // Sistema di caricamento deals multi-sito
-        async function loadDealsConfig() {
-            // Metodo 1: Carica da file esterno deals-config.js
-            if (typeof DEALS_CONFIG !== 'undefined') {
-                return DEALS_CONFIG;
-            }
-            
-            // Metodo 2: Carica da JSON basato sul dominio
-            try {
-                const hostname = window.location.hostname;
-                const siteName = hostname.split('.')[0]; // es: 'hotel-roma'
-                
-                const response = await fetch(`/configs/${siteName}-deals.json`);
-                if (response.ok) {
-                    return await response.json();
-                }
-            } catch (error) {
-                console.error('Errore caricamento configurazione:', error);
-            }
-            
-            // Fallback: configurazione di default
-            return {
-                hotelName: "Hotel",
-                deals: []
-            };
-        }
+              data[dealName][action][today]++;
+              this.saveData(data);
 
-        async function loadDeals() {
-            const dealsContainer = document.getElementById('dealsContent');
-            const hotelNameEl = document.getElementById('hotelName');
-            
-            try {
-                // Carica la configurazione
-                const config = await loadDealsConfig();
-                
-                // Mostra il nome dell'hotel
-                if (config.hotelName) {
-                    hotelNameEl.textContent = config.hotelName;
-                }
-                
-                // Simula un caricamento
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                if (!config.deals || config.deals.length === 0) {
-                    dealsContainer.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🎁</div>
-                            <h3>Nessuna offerta disponibile</h3>
-                            <p>Al momento non ci sono offerte speciali, ma torna presto per scoprire le novità!</p>
-                        </div>
-                    `;
-                    return;
-                }
+              console.log(Tracked: ${dealName} - ${action} - Total today: ${data[dealName][action][today]});
+          },
 
-                dealsContainer.innerHTML = '';
-                
-                config.deals.forEach((deal, index) => {
-                    const dealElement = document.createElement('div');
-                    dealElement.className = 'deal-card';
-                    dealElement.style.animationDelay = `${index * 0.1}s`;
-                    
-                    // Aggiungi categoria come data attribute
-                    if (deal.category) {
-                        dealElement.setAttribute('data-category', deal.category);
-                    }
+          getReport: function() {
+              const data = this.getData();
+              console.log('=== DEAL TRACKING REPORT ===');
+              Object.keys(data).forEach(dealName => {
+                  console.log(\n${dealName}:);
+                  Object.keys(data[dealName]).forEach(action => {
+                      console.log(  ${action}:);
+                      Object.keys(data[dealName][action]).forEach(date => {
+                          console.log(    ${date}: ${data[dealName][action][date]});
+                      });
+                  });
+              });
+              return data;
+          }
+      };
 
-                    // --- BLOCCO MODIFICATO: aggiunge il pulsante REPORT solo se isAdmin ---
-                    dealElement.innerHTML = `
-                        <div class="deal-header">
-                            <div class="deal-icon">${deal.icon || '🎁'}</div>
-                            <div class="deal-content">
-                                <div class="deal-name">${deal.name}</div>
-                                <div class="deal-discount">${deal.discount}</div>
-                                ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="deal-actions">
-                            <button class="deal-btn btn-coupon" onclick='showCoupon(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
-                                🎟️ Mostra Coupon
-                            </button>
-                            ${deal.link ? `
-                                <button class="deal-btn btn-website" onclick='visitWebsite(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>
-                                    🌐 Visita Sito
-                                </button>
-                            ` : ''}
-                            ${isAdmin ? `
-                                <button class="deal-btn btn-report" onclick='dealTracking.getReport()'>
-                                    📝 Report
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                    // ---------------------------------------------------------------
+      // Generatore di codici coupon
+      function generateCouponCode(dealName, hotelName) {
+          const date = new Date();
+          const dateStr = date.getFullYear().toString().substr(2) +
+                         (date.getMonth() + 1).toString().padStart(2, '0') +
+                         date.getDate().toString().padStart(2, '0');
+          const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+          const prefix = (hotelName || 'HOTEL').substring(0, 3).toUpperCase();
+          return ${prefix}${dateStr}${random};
+      }
 
-                    dealsContainer.appendChild(dealElement);
-                });
-            } catch (error) {
-                console.error('Errore caricamento deals:', error);
-                dealsContainer.innerHTML = `
-                    <div class="error-state">
-                        <div class="error-icon">⚠️</div>
-                        <h3>Errore nel caricamento</h3>
-                        <p>Non è stato possibile caricare le offerte. Riprova più tardi.</p>
-                    </div>
-                `;
-            }
-        }
+      // Mostra modal coupon
+      function showCoupon(deal, hotelName) {
+          const modal = document.getElementById('couponModal');
+          const code = generateCouponCode(deal.name, hotelName);
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', loadDeals);
-        
-        // Chiudi modal cliccando fuori
-        document.getElementById('couponModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeCouponModal();
-            }
-        });
-        
-        // Rendi disponibile per debug
-        window.dealTracking = dealTracking;
+          document.getElementById('couponTitle').textContent = deal.name;
+          document.getElementById('couponInstructions').textContent = 'Mostra questo codice per ottenere:';
+          document.getElementById('couponCode').textContent = code;
+          document.getElementById('couponValidity').textContent = Codice valido per 30 giorni dalla generazione;
+
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+
+          // Traccia visualizzazione coupon
+          dealTracking.track(deal.name, 'coupon_views');
+      }
+
+      // Chiudi modal
+      function closeCouponModal() {
+          const modal = document.getElementById('couponModal');
+          modal.classList.remove('active');
+          document.body.style.overflow = 'auto';
+      }
+
+      // Visita sito web
+      function visitWebsite(deal) {
+          if (deal.link) {
+              // Traccia click su sito web
+              dealTracking.track(deal.name, 'website_clicks');
+              window.open(deal.link, '_blank');
+          }
+      }
+
+      // Sistema di caricamento deals multi-sito
+      async function loadDealsConfig() {
+          // Metodo 1: Carica da file esterno deals-config.js
+          if (typeof DEALS_CONFIG !== 'undefined') {
+              return DEALS_CONFIG;
+          }
+
+          // Metodo 2: Carica da JSON basato sul dominio
+          try {
+              const hostname = window.location.hostname;
+              const siteName = hostname.split('.')[0]; // es: 'hotel-roma'
+
+              const response = await fetch(/configs/${siteName}-deals.json);
+              if (response.ok) {
+                  return await response.json();
+              }
+          } catch (error) {
+              console.error('Errore caricamento configurazione:', error);
+          }
+
+          // Fallback: configurazione di default
+          return {
+              hotelName: "Hotel",
+              deals: []
+          };
+      }
+
+      async function loadDeals() {
+          const dealsContainer = document.getElementById('dealsContent');
+          const hotelNameEl = document.getElementById('hotelName');
+
+          try {
+              // Carica la configurazione
+              const config = await loadDealsConfig();
+
+              // Mostra il nome dell'hotel
+              if (config.hotelName) {
+                  hotelNameEl.textContent = config.hotelName;
+              }
+
+              // Simula un caricamento
+              await new Promise(resolve => setTimeout(resolve, 1000));
+
+              if (!config.deals || config.deals.length === 0) {
+                  dealsContainer.innerHTML =
+                      <div class="empty-state">
+                          <div class="empty-icon">🎁</div>
+                          <h3>Nessuna offerta disponibile</h3>
+                          <p>Al momento non ci sono offerte speciali, ma torna presto per scoprire le novità!</p>
+                      </div>
+                  ;
+                  return;
+              }
+
+              dealsContainer.innerHTML = '';
+
+              config.deals.forEach((deal, index) => {
+                  const dealElement = document.createElement('div');
+                  dealElement.className = 'deal-card';
+                  dealElement.style.animationDelay = ${index * 0.1}s;
+
+                  // Aggiungi categoria come data attribute
+                  if (deal.category) {
+                      dealElement.setAttribute('data-category', deal.category);
+                  }
+
+                  dealElement.innerHTML =
+                      <div class="deal-header">
+                          <div class="deal-icon">${deal.icon || '🎁'}</div>
+                          <div class="deal-content">
+                              <div class="deal-name">${deal.name}</div>
+                              <div class="deal-discount">${deal.discount}</div>
+                              ${deal.category ? <span class="deal-category">${deal.category}</span> : ''}
+                          </div>
+                      </div>
+                      <div class="deal-actions">
+                          <button class="deal-btn btn-coupon" onclick='showCoupon(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
+                              🎟️ Mostra Coupon
+                          </button>
+                          ${deal.link ?
+                              <button class="deal-btn btn-website" onclick='visitWebsite(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>
+                                  🌐 Visita Sito
+                              </button>
+                           : ''}
+                      </div>
+                  ;
+
+                  dealsContainer.appendChild(dealElement);
+              });
+          } catch (error) {
+              console.error('Errore caricamento deals:', error);
+              dealsContainer.innerHTML =
+                  <div class="error-state">
+                      <div class="error-icon">⚠️</div>
+                      <h3>Errore nel caricamento</h3>
+                      <p>Non è stato possibile caricare le offerte. Riprova più tardi.</p>
+                  </div>
+              ;
+          }
+      }
+
+      // Event listeners
+      document.addEventListener('DOMContentLoaded', loadDeals);
+
+      // Chiudi modal cliccando fuori
+      document.getElementById('couponModal').addEventListener('click', function(e) {
+          if (e.target === this) {
+              closeCouponModal();
+          }
+      });
+
+      // Rendi disponibile per debug
+      window.dealTracking = dealTracking;
     </script>
-</body>
+  </body>
 </html>
