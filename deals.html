@@ -90,37 +90,24 @@
             background: white;
             border-radius: 20px;
             padding: 24px;
-            text-decoration: none;
-            color: inherit;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .deal-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
-            transition: left 0.6s;
-        }
-
-        .deal-card:hover::before {
-            left: 100%;
         }
 
         .deal-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
             border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .deal-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 16px;
         }
 
         .deal-icon {
@@ -158,16 +145,48 @@
             line-height: 1.5;
         }
 
-        .deal-arrow {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+        .deal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
         }
 
-        .deal-card:hover .deal-arrow {
+        .deal-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-coupon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-coupon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-website {
+            background: white;
             color: #667eea;
-            transform: translateX(4px);
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-website:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
         }
 
         /* Category badges */
@@ -199,6 +218,96 @@
 
         .deal-card[data-category="shopping"] .deal-icon {
             background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(252, 165, 165, 0.2));
+        }
+
+        /* Modal per coupon */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+            color: #1e293b;
+        }
+
+        .coupon-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .coupon-code {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .coupon-instructions {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .coupon-validity {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 16px;
         }
 
         /* Loading state */
@@ -263,25 +372,12 @@
                 font-size: 1.8rem;
             }
             
-            .deal-card {
-                padding: 20px;
+            .deal-actions {
                 flex-direction: column;
-                text-align: center;
-                gap: 16px;
             }
             
-            .deal-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-            }
-            
-            .deal-arrow {
-                transform: rotate(90deg);
-            }
-            
-            .deal-card:hover .deal-arrow {
-                transform: rotate(90deg) translateY(4px);
+            .deal-btn {
+                width: 100%;
             }
         }
 
@@ -298,6 +394,15 @@
                 font-size: 1.6rem;
                 gap: 12px;
             }
+            
+            .modal-content {
+                padding: 24px;
+            }
+            
+            .coupon-code {
+                font-size: 1.4rem;
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -309,7 +414,6 @@
                 <span>🎁</span>
                 <span>Offerte nei dintorni</span>
             </h2>
-            <p class="hotel-name" id="hotelName"></p>
         </div>
         
         <div class="deals-grid" id="dealsContent">
@@ -320,10 +424,114 @@
         </div>
     </div>
 
+    <!-- Modal per coupon -->
+    <div class="modal" id="couponModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCouponModal()">✕</button>
+            <h3 class="coupon-title" id="couponTitle"></h3>
+            <p class="coupon-instructions" id="couponInstructions"></p>
+            <div class="coupon-code" id="couponCode"></div>
+            <p class="coupon-validity" id="couponValidity"></p>
+        </div>
+    </div>
+
     <!-- Configurazione deals specifica per sito -->
-    <script src="js/deals-config.js"></script>
+    <script src="js/deals-config-milano.js"></script>
     
     <script>
+        // Sistema di tracking
+        const dealTracking = {
+            getData: function() {
+                const saved = localStorage.getItem('dealTrackingData');
+                return saved ? JSON.parse(saved) : {};
+            },
+            
+            saveData: function(data) {
+                localStorage.setItem('dealTrackingData', JSON.stringify(data));
+            },
+            
+            track: function(dealName, action) {
+                const data = this.getData();
+                const today = new Date().toISOString().split('T')[0];
+                
+                if (!data[dealName]) {
+                    data[dealName] = {};
+                }
+                
+                if (!data[dealName][action]) {
+                    data[dealName][action] = {};
+                }
+                
+                if (!data[dealName][action][today]) {
+                    data[dealName][action][today] = 0;
+                }
+                
+                data[dealName][action][today]++;
+                this.saveData(data);
+                
+                console.log(`Tracked: ${dealName} - ${action} - Total today: ${data[dealName][action][today]}`);
+            },
+            
+            getReport: function() {
+                const data = this.getData();
+                console.log('=== DEAL TRACKING REPORT ===');
+                Object.keys(data).forEach(dealName => {
+                    console.log(`\n${dealName}:`);
+                    Object.keys(data[dealName]).forEach(action => {
+                        console.log(`  ${action}:`);
+                        Object.keys(data[dealName][action]).forEach(date => {
+                            console.log(`    ${date}: ${data[dealName][action][date]}`);
+                        });
+                    });
+                });
+                return data;
+            }
+        };
+
+        // Generatore di codici coupon
+        function generateCouponCode(dealName, hotelName) {
+            const date = new Date();
+            const dateStr = date.getFullYear().toString().substr(2) + 
+                           (date.getMonth() + 1).toString().padStart(2, '0') +
+                           date.getDate().toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+            const prefix = (hotelName || 'HOTEL').substring(0, 3).toUpperCase();
+            return `${prefix}${dateStr}${random}`;
+        }
+
+        // Mostra modal coupon
+        function showCoupon(deal, hotelName) {
+            const modal = document.getElementById('couponModal');
+            const code = generateCouponCode(deal.name, hotelName);
+            
+            document.getElementById('couponTitle').textContent = deal.name;
+            document.getElementById('couponInstructions').textContent = 'Mostra questo codice per ottenere:';
+            document.getElementById('couponCode').textContent = code;
+            document.getElementById('couponValidity').textContent = `Codice valido per 30 giorni dalla generazione`;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Traccia visualizzazione coupon
+            dealTracking.track(deal.name, 'coupon_views');
+        }
+
+        // Chiudi modal
+        function closeCouponModal() {
+            const modal = document.getElementById('couponModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Visita sito web
+        function visitWebsite(deal) {
+            if (deal.link) {
+                // Traccia click su sito web
+                dealTracking.track(deal.name, 'website_clicks');
+                window.open(deal.link, '_blank');
+            }
+        }
+
         // Sistema di caricamento deals multi-sito
         async function loadDealsConfig() {
             // Metodo 1: Carica da file esterno deals-config.js
@@ -353,16 +561,10 @@
 
         async function loadDeals() {
             const dealsContainer = document.getElementById('dealsContent');
-            const hotelNameEl = document.getElementById('hotelName');
             
             try {
                 // Carica la configurazione
                 const config = await loadDealsConfig();
-                
-                // Mostra il nome dell'hotel
-                if (config.hotelName) {
-                    hotelNameEl.textContent = config.hotelName;
-                }
                 
                 // Simula un caricamento
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -381,8 +583,7 @@
                 dealsContainer.innerHTML = '';
                 
                 config.deals.forEach((deal, index) => {
-                    const dealElement = document.createElement('a');
-                    dealElement.href = deal.link || '#';
+                    const dealElement = document.createElement('div');
                     dealElement.className = 'deal-card';
                     dealElement.style.animationDelay = `${index * 0.1}s`;
                     
@@ -391,20 +592,25 @@
                         dealElement.setAttribute('data-category', deal.category);
                     }
                     
-                    // Se è un link esterno, apri in nuova scheda
-                    if (deal.link && deal.link.startsWith('http')) {
-                        dealElement.target = '_blank';
-                        dealElement.rel = 'noopener noreferrer';
-                    }
-                    
                     dealElement.innerHTML = `
-                        <div class="deal-icon">${deal.icon || '🎁'}</div>
-                        <div class="deal-content">
-                            <div class="deal-name">${deal.name}</div>
-                            <div class="deal-discount">${deal.discount}</div>
-                            ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
+                        <div class="deal-header">
+                            <div class="deal-icon">${deal.icon || '🎁'}</div>
+                            <div class="deal-content">
+                                <div class="deal-name">${deal.name}</div>
+                                <div class="deal-discount">${deal.discount}</div>
+                                ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
+                            </div>
                         </div>
-                        <div class="deal-arrow">→</div>
+                        <div class="deal-actions">
+                            <button class="deal-btn btn-coupon" onclick='showCoupon(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
+                                🎟️ Mostra Coupon
+                            </button>
+                            ${deal.link ? `
+                                <button class="deal-btn btn-website" onclick='visitWebsite(${JSON.stringify(deal).replace(/'/g, "&apos;")})'>
+                                    🌐 Visita Sito
+                                </button>
+                            ` : ''}
+                        </div>
                     `;
                     
                     dealsContainer.appendChild(dealElement);
@@ -421,8 +627,18 @@
             }
         }
 
-        // Carica le offerte quando la pagina è pronta
+        // Event listeners
         document.addEventListener('DOMContentLoaded', loadDeals);
+        
+        // Chiudi modal cliccando fuori
+        document.getElementById('couponModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCouponModal();
+            }
+        });
+        
+        // Rendi disponibile per debug
+        window.dealTracking = dealTracking;
     </script>
 </body>
 </html>
