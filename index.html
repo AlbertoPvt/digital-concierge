@@ -160,6 +160,13 @@
             transition: transform 0.3s ease;
         }
 
+        /* Rendi le emoji bianche nei bottoni */
+        .btn-primary .icon,
+        .btn-success .icon,
+        .btn-warning .icon {
+            filter: grayscale(1) brightness(0) invert(1);
+        }
+
         .nav-btn:hover .icon {
             transform: scale(1.2) rotate(5deg);
         }
@@ -176,8 +183,8 @@
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #84fab0, #8fd3f4);
-            color: #1e293b;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
         }
 
         .btn-success:hover {
@@ -187,8 +194,8 @@
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
-            color: #1e293b;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
         }
 
         .btn-warning:hover {
@@ -259,11 +266,11 @@
         
         <div class="nav-buttons">
             <a href="assistant.html" class="nav-btn btn-primary">
-                <span class="icon">🧠</span>
+                <span class="icon">👤</span>
                 <span>Concierge Virtuale</span>
             </a>
             <a href="deals.html" class="nav-btn btn-success">
-                <span class="icon">🎁</span>
+                <span class="icon">🏷️</span>
                 <span>Offerte locali</span>
             </a>
             <a href="videos.html" class="nav-btn btn-warning">
