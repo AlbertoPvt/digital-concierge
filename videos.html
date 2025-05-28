@@ -357,6 +357,143 @@
             }
         }
     </style>
+    <script>
+        // Traduzioni
+        const translations = {
+            it: {
+                title: "Video Esperienze",
+                backToHome: "← Torna alla Home",
+                experiencesToLive: "Esperienze da vivere",
+                loading: "Caricamento video esperienze...",
+                noVideos: "Nessun video disponibile",
+                noVideosMessage: "Al momento non ci sono video esperienze disponibili.",
+                videoTitles: {
+                    "Cooking Class": "Corso di Cucina"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Scopri le ricette tipiche milanesi con uno chef professionista."
+                }
+            },
+            en: {
+                title: "Video Experiences",
+                backToHome: "← Back to Home",
+                experiencesToLive: "Experiences to live",
+                loading: "Loading video experiences...",
+                noVideos: "No videos available",
+                noVideosMessage: "There are no video experiences available at the moment.",
+                videoTitles: {
+                    "Cooking Class": "Cooking Class"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Discover typical Milanese recipes with a professional chef."
+                }
+            },
+            es: {
+                title: "Experiencias en Video",
+                backToHome: "← Volver al Inicio",
+                experiencesToLive: "Experiencias para vivir",
+                loading: "Cargando experiencias en video...",
+                noVideos: "No hay videos disponibles",
+                noVideosMessage: "No hay experiencias en video disponibles en este momento.",
+                videoTitles: {
+                    "Cooking Class": "Clase de Cocina"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Descubre las recetas típicas milanesas con un chef profesional."
+                }
+            },
+            fr: {
+                title: "Expériences Vidéo",
+                backToHome: "← Retour à l'accueil",
+                experiencesToLive: "Expériences à vivre",
+                loading: "Chargement des expériences vidéo...",
+                noVideos: "Aucune vidéo disponible",
+                noVideosMessage: "Il n'y a pas d'expériences vidéo disponibles pour le moment.",
+                videoTitles: {
+                    "Cooking Class": "Cours de Cuisine"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Découvrez les recettes typiques milanaises avec un chef professionnel."
+                }
+            },
+            pt: {
+                title: "Experiências em Vídeo",
+                backToHome: "← Voltar ao Início",
+                experiencesToLive: "Experiências para viver",
+                loading: "Carregando experiências em vídeo...",
+                noVideos: "Nenhum vídeo disponível",
+                noVideosMessage: "Não há experiências em vídeo disponíveis no momento.",
+                videoTitles: {
+                    "Cooking Class": "Aula de Culinária"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Descubra as receitas típicas milanesas com um chef profissional."
+                }
+            },
+            de: {
+                title: "Video-Erlebnisse",
+                backToHome: "← Zurück zur Startseite",
+                experiencesToLive: "Erlebnisse zum Erleben",
+                loading: "Video-Erlebnisse werden geladen...",
+                noVideos: "Keine Videos verfügbar",
+                noVideosMessage: "Derzeit sind keine Video-Erlebnisse verfügbar.",
+                videoTitles: {
+                    "Cooking Class": "Kochkurs"
+                },
+                videoDescriptions: {
+                    "Cooking Class": "Entdecken Sie typische Mailänder Rezepte mit einem professionellen Koch."
+                }
+            }
+        };
+
+        // Rileva la lingua del browser
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            const lang = browserLang.substring(0, 2).toLowerCase();
+            
+            // Controlla se abbiamo la traduzione per questa lingua
+            if (translations[lang]) {
+                return lang;
+            }
+            
+            // Default all'italiano
+            return 'it';
+        }
+
+        // Variabile globale per le traduzioni correnti
+        let currentTranslations;
+
+        // Applica le traduzioni
+        function applyTranslations() {
+            const lang = detectLanguage();
+            currentTranslations = translations[lang];
+            
+            // Aggiorna il tag lang dell'HTML
+            document.documentElement.lang = lang;
+            
+            // Aggiorna il titolo della pagina
+            document.title = currentTranslations.title;
+            
+            // Aggiorna i contenuti (quando il DOM è pronto)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => updateContent(currentTranslations));
+            } else {
+                updateContent(currentTranslations);
+            }
+        }
+
+        function updateContent(t) {
+            // Aggiorna i testi statici
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) backBtn.textContent = t.backToHome;
+            
+            const headerTitle = document.querySelector('.header-title span:last-child');
+            if (headerTitle) headerTitle.textContent = t.experiencesToLive;
+        }
+
+        // Applica le traduzioni all'avvio
+        applyTranslations();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -469,13 +606,17 @@
             // Ottieni la thumbnail
             const thumbnailUrl = video.thumbnail || await getVimeoThumbnail(video.vimeoId);
             
+            // Traduci titolo e descrizione se disponibili
+            const translatedTitle = currentTranslations.videoTitles[video.title] || video.title;
+            const translatedDescription = currentTranslations.videoDescriptions[video.title] || video.description;
+            
             videoElement.innerHTML = `
                 <div class="video-thumbnail loading" id="thumb-${index}">
                     <div class="play-icon">▶</div>
                 </div>
                 <div class="video-content">
-                    <h3 class="video-title">${video.title}</h3>
-                    <p class="video-description">${video.description}</p>
+                    <h3 class="video-title">${translatedTitle}</h3>
+                    <p class="video-description">${translatedDescription}</p>
                     <div class="video-meta">
                         <span class="duration-badge">${video.duration}</span>
                     </div>
@@ -483,7 +624,7 @@
             `;
             
             // Aggiungi click listener
-            videoElement.addEventListener('click', () => openVideo(video.vimeoId, video.title));
+            videoElement.addEventListener('click', () => openVideo(video.vimeoId, translatedTitle));
             
             // Carica la thumbnail dopo aver creato l'elemento
             const thumbElement = videoElement.querySelector(`#thumb-${index}`);
@@ -497,13 +638,21 @@
         async function loadVideos() {
             const videoContainer = document.getElementById('videoContent');
             
+            // Aggiorna il testo di caricamento con la traduzione corrente
+            videoContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>${currentTranslations.loading}</p>
+                </div>
+            `;
+            
             setTimeout(async () => {
                 if (!CONFIG.videos || CONFIG.videos.length === 0) {
                     videoContainer.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">🎬</div>
-                            <h3>Nessun video disponibile</h3>
-                            <p>Al momento non ci sono video esperienze disponibili.</p>
+                            <h3>${currentTranslations.noVideos}</h3>
+                            <p>${currentTranslations.noVideosMessage}</p>
                         </div>
                     `;
                     return;

@@ -405,6 +405,179 @@
             }
         }
     </style>
+    <script>
+        // Traduzioni
+        const translations = {
+            it: {
+                title: "Offerte Locali",
+                backToHome: "← Torna alla Home",
+                nearbyDeals: "Offerte nei dintorni",
+                showCoupon: "🎟️ Mostra Coupon",
+                visitWebsite: "🌐 Visita Sito",
+                loading: "Caricamento offerte...",
+                noDeals: "Nessuna offerta disponibile",
+                noDealsMessage: "Al momento non ci sono offerte speciali, ma torna presto per scoprire le novità!",
+                errorTitle: "Errore nel caricamento",
+                errorMessage: "Non è stato possibile caricare le offerte. Riprova più tardi.",
+                couponInstructions: "Mostra questo codice per ottenere:",
+                couponValidity: "Codice valido per 30 giorni dalla generazione",
+                categories: {
+                    ristorante: "ristorante",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "shopping"
+                }
+            },
+            en: {
+                title: "Local Deals",
+                backToHome: "← Back to Home",
+                nearbyDeals: "Nearby deals",
+                showCoupon: "🎟️ Show Coupon",
+                visitWebsite: "🌐 Visit Website",
+                loading: "Loading deals...",
+                noDeals: "No deals available",
+                noDealsMessage: "There are no special offers at the moment, but check back soon for updates!",
+                errorTitle: "Loading error",
+                errorMessage: "Unable to load deals. Please try again later.",
+                couponInstructions: "Show this code to get:",
+                couponValidity: "Code valid for 30 days from generation",
+                categories: {
+                    ristorante: "restaurant",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "shopping"
+                }
+            },
+            es: {
+                title: "Ofertas Locales",
+                backToHome: "← Volver al Inicio",
+                nearbyDeals: "Ofertas cercanas",
+                showCoupon: "🎟️ Mostrar Cupón",
+                visitWebsite: "🌐 Visitar Sitio",
+                loading: "Cargando ofertas...",
+                noDeals: "No hay ofertas disponibles",
+                noDealsMessage: "No hay ofertas especiales en este momento, ¡pero vuelve pronto para descubrir novedades!",
+                errorTitle: "Error al cargar",
+                errorMessage: "No se pudieron cargar las ofertas. Inténtalo más tarde.",
+                couponInstructions: "Muestra este código para obtener:",
+                couponValidity: "Código válido por 30 días desde la generación",
+                categories: {
+                    ristorante: "restaurante",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "compras"
+                }
+            },
+            fr: {
+                title: "Offres Locales",
+                backToHome: "← Retour à l'accueil",
+                nearbyDeals: "Offres à proximité",
+                showCoupon: "🎟️ Afficher le Coupon",
+                visitWebsite: "🌐 Visiter le Site",
+                loading: "Chargement des offres...",
+                noDeals: "Aucune offre disponible",
+                noDealsMessage: "Il n'y a pas d'offres spéciales pour le moment, mais revenez bientôt pour découvrir les nouveautés!",
+                errorTitle: "Erreur de chargement",
+                errorMessage: "Impossible de charger les offres. Veuillez réessayer plus tard.",
+                couponInstructions: "Montrez ce code pour obtenir:",
+                couponValidity: "Code valable 30 jours après génération",
+                categories: {
+                    ristorante: "restaurant",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "shopping"
+                }
+            },
+            pt: {
+                title: "Ofertas Locais",
+                backToHome: "← Voltar ao Início",
+                nearbyDeals: "Ofertas nas proximidades",
+                showCoupon: "🎟️ Mostrar Cupom",
+                visitWebsite: "🌐 Visitar Site",
+                loading: "Carregando ofertas...",
+                noDeals: "Nenhuma oferta disponível",
+                noDealsMessage: "Não há ofertas especiais no momento, mas volte em breve para descobrir novidades!",
+                errorTitle: "Erro ao carregar",
+                errorMessage: "Não foi possível carregar as ofertas. Tente novamente mais tarde.",
+                couponInstructions: "Mostre este código para obter:",
+                couponValidity: "Código válido por 30 dias a partir da geração",
+                categories: {
+                    ristorante: "restaurante",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "compras"
+                }
+            },
+            de: {
+                title: "Lokale Angebote",
+                backToHome: "← Zurück zur Startseite",
+                nearbyDeals: "Angebote in der Nähe",
+                showCoupon: "🎟️ Coupon anzeigen",
+                visitWebsite: "🌐 Website besuchen",
+                loading: "Angebote werden geladen...",
+                noDeals: "Keine Angebote verfügbar",
+                noDealsMessage: "Derzeit gibt es keine Sonderangebote, aber schauen Sie bald wieder vorbei!",
+                errorTitle: "Fehler beim Laden",
+                errorMessage: "Angebote konnten nicht geladen werden. Bitte später erneut versuchen.",
+                couponInstructions: "Zeigen Sie diesen Code, um zu erhalten:",
+                couponValidity: "Code gültig für 30 Tage ab Erstellung",
+                categories: {
+                    ristorante: "restaurant",
+                    spa: "spa",
+                    tour: "tour",
+                    shopping: "einkaufen"
+                }
+            }
+        };
+
+        // Rileva la lingua del browser
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            const lang = browserLang.substring(0, 2).toLowerCase();
+            
+            // Controlla se abbiamo la traduzione per questa lingua
+            if (translations[lang]) {
+                return lang;
+            }
+            
+            // Default all'italiano
+            return 'it';
+        }
+
+        // Variabile globale per le traduzioni correnti
+        let currentTranslations;
+
+        // Applica le traduzioni
+        function applyTranslations() {
+            const lang = detectLanguage();
+            currentTranslations = translations[lang];
+            
+            // Aggiorna il tag lang dell'HTML
+            document.documentElement.lang = lang;
+            
+            // Aggiorna il titolo della pagina
+            document.title = currentTranslations.title;
+            
+            // Aggiorna i contenuti (quando il DOM è pronto)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => updateContent(currentTranslations));
+            } else {
+                updateContent(currentTranslations);
+            }
+        }
+
+        function updateContent(t) {
+            // Aggiorna i testi statici
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) backBtn.textContent = t.backToHome;
+            
+            const headerTitle = document.querySelector('.header-title span:last-child');
+            if (headerTitle) headerTitle.textContent = t.nearbyDeals;
+        }
+
+        // Applica le traduzioni all'avvio
+        applyTranslations();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -489,9 +662,9 @@
             const code = generateCouponCode(deal.name, hotelName);
             
             document.getElementById('couponTitle').textContent = deal.name;
-            document.getElementById('couponInstructions').textContent = 'Mostra questo codice per ottenere:';
+            document.getElementById('couponInstructions').textContent = currentTranslations.couponInstructions;
             document.getElementById('couponCode').textContent = code;
-            document.getElementById('couponValidity').textContent = `Codice valido per 30 giorni dalla generazione`;
+            document.getElementById('couponValidity').textContent = currentTranslations.couponValidity;
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -548,6 +721,14 @@
                 // Carica la configurazione
                 const config = await loadDealsConfig();
                 
+                // Aggiorna il testo di caricamento con la traduzione corrente
+                dealsContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>${currentTranslations.loading}</p>
+                    </div>
+                `;
+                
                 // Simula un caricamento
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
@@ -555,8 +736,8 @@
                     dealsContainer.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">🎁</div>
-                            <h3>Nessuna offerta disponibile</h3>
-                            <p>Al momento non ci sono offerte speciali, ma torna presto per scoprire le novità!</p>
+                            <h3>${currentTranslations.noDeals}</h3>
+                            <p>${currentTranslations.noDealsMessage}</p>
                         </div>
                     `;
                     return;
@@ -574,23 +755,27 @@
                         dealElement.setAttribute('data-category', deal.category);
                     }
                     
-                    // Modifica qui per passare hotelName a visitWebsite
+                    // Traduci la categoria se presente
+                    const translatedCategory = deal.category && currentTranslations.categories[deal.category] 
+                        ? currentTranslations.categories[deal.category] 
+                        : deal.category;
+                    
                     dealElement.innerHTML = `
                         <div class="deal-header">
                             <div class="deal-icon">${deal.icon || '🎁'}</div>
                             <div class="deal-content">
                                 <div class="deal-name">${deal.name}</div>
                                 <div class="deal-discount">${deal.discount}</div>
-                                ${deal.category ? `<span class="deal-category">${deal.category}</span>` : ''}
+                                ${translatedCategory ? `<span class="deal-category">${translatedCategory}</span>` : ''}
                             </div>
                         </div>
                         <div class="deal-actions">
                             <button class="deal-btn btn-coupon" onclick='showCoupon(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
-                                🎟️ Mostra Coupon
+                                ${currentTranslations.showCoupon}
                             </button>
                             ${deal.link ? `
                                 <button class="deal-btn btn-website" onclick='visitWebsite(${JSON.stringify(deal).replace(/'/g, "&apos;")}, "${config.hotelName}")'>
-                                    🌐 Visita Sito
+                                    ${currentTranslations.visitWebsite}
                                 </button>
                             ` : ''}
                         </div>
@@ -603,8 +788,8 @@
                 dealsContainer.innerHTML = `
                     <div class="error-state">
                         <div class="error-icon">⚠️</div>
-                        <h3>Errore nel caricamento</h3>
-                        <p>Non è stato possibile caricare le offerte. Riprova più tardi.</p>
+                        <h3>${currentTranslations.errorTitle}</h3>
+                        <p>${currentTranslations.errorMessage}</p>
                     </div>
                 `;
             }

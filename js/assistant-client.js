@@ -56,7 +56,7 @@ class AssistantClient {
       if (assistantMessage) {
         return assistantMessage.content[0].text.value;
       } else {
-        throw new Error("Nessuna risposta dall'assistant");
+        throw new Error(getTranslation("noResponse"));
       }
     } catch (error) {
       console.error("Errore invio messaggio:", error);
@@ -146,180 +146,73 @@ async function loadAssistantConfig() {
   );
 }
 
+// Traduzioni per i messaggi del sistema
+const systemTranslations = {
+  it: {
+    connectionError: "Errore di connessione. Ricarica la pagina per riprovare.",
+    genericError: "Si è verificato un errore. Riprova tra qualche istante.",
+    resetMessage: "Conversazione resettata. Come posso aiutarti?",
+    noResponse: "Nessuna risposta dall'assistant"
+  },
+  en: {
+    connectionError: "Connection error. Reload the page to try again.",
+    genericError: "An error occurred. Please try again in a moment.",
+    resetMessage: "Conversation reset. How can I help you?",
+    noResponse: "No response from the assistant"
+  },
+  es: {
+    connectionError: "Error de conexión. Recarga la página para intentar de nuevo.",
+    genericError: "Se produjo un error. Inténtalo de nuevo en un momento.",
+    resetMessage: "Conversación reiniciada. ¿Cómo puedo ayudarte?",
+    noResponse: "Sin respuesta del asistente"
+  },
+  fr: {
+    connectionError: "Erreur de connexion. Rechargez la page pour réessayer.",
+    genericError: "Une erreur s'est produite. Veuillez réessayer dans un instant.",
+    resetMessage: "Conversation réinitialisée. Comment puis-je vous aider?",
+    noResponse: "Pas de réponse de l'assistant"
+  },
+  pt: {
+    connectionError: "Erro de conexão. Recarregue a página para tentar novamente.",
+    genericError: "Ocorreu um erro. Tente novamente em instantes.",
+    resetMessage: "Conversa reiniciada. Como posso ajudar?",
+    noResponse: "Sem resposta do assistente"
+  },
+  de: {
+    connectionError: "Verbindungsfehler. Laden Sie die Seite neu, um es erneut zu versuchen.",
+    genericError: "Ein Fehler ist aufgetreten. Bitte versuchen Sie es gleich noch einmal.",
+    resetMessage: "Unterhaltung zurückgesetzt. Wie kann ich Ihnen helfen?",
+    noResponse: "Keine Antwort vom Assistenten"
+  }
+};
+
 // Variabili globali
 let assistant = null;
 let isWaitingForResponse = false;
+let currentLanguage = 'it';
 
-// Inizializza l'assistant quando la pagina è pronta
-async function initializeAssistant() {
-  try {
-    // Carica la configurazione specifica dell'hotel
-    const config = await loadAssistantConfig();
-
-    assistant = new AssistantClient({
-      assistantId: config.assistantId,
-    });
-
-    await assistant.initialize();
-    updateConnectionStatus(true);
-
-    // Se c'è un messaggio di benvenuto personalizzato
-    if (config.welcomeMessage) {
-      const chatBox = document.getElementById("chatBox");
-      if (chatBox && chatBox.children.length === 0) {
-        addMessage(config.welcomeMessage, "bot");
-      }
-    }
-  } catch (error) {
-    console.error("Errore inizializzazione:", error);
-    showError("Errore di connessione. Ricarica la pagina per riprovare.");
-    updateConnectionStatus(false);
+// Rileva la lingua corrente
+function getCurrentLanguage() {
+  // Prima controlla se è stata impostata dalla pagina HTML
+  if (window.currentLanguage) {
+    return window.currentLanguage;
   }
+  
+  // Altrimenti rileva dal browser
+  const browserLang = navigator.language || navigator.userLanguage;
+  const lang = browserLang.substring(0, 2).toLowerCase();
+  
+  // Controlla se abbiamo traduzioni per questa lingua
+  if (systemTranslations[lang]) {
+    return lang;
+  }
+  
+  // Default all'italiano
+  return 'it';
 }
 
-// Invia messaggio (chiamata dal pulsante)
-async function sendMessage() {
-  const input = document.getElementById("userInput");
-  const sendButton = document.getElementById("sendButton");
-  const typingIndicator = document.getElementById("typingIndicator");
-
-  if (!input.value.trim() || isWaitingForResponse || !assistant) return;
-
-  const userMessage = input.value;
-  input.value = "";
-
-  // Disabilita input durante l'invio
-  isWaitingForResponse = true;
-  input.disabled = true;
-  sendButton.disabled = true;
-
-  // Aggiungi messaggio utente
-  addMessage(userMessage, "user");
-
-  // Mostra indicatore di digitazione
-  typingIndicator.classList.add("show");
-
-  try {
-    // Ottieni risposta dall'assistant
-    const response = await assistant.sendMessage(userMessage);
-
-    // Mostra la risposta
-    addMessage(response, "bot");
-  } catch (error) {
-    console.error("Errore:", error);
-    showError("Si è verificato un errore. Riprova tra qualche istante.");
-  } finally {
-    // Riabilita input
-    isWaitingForResponse = false;
-    input.disabled = false;
-    sendButton.disabled = false;
-    typingIndicator.classList.remove("show");
-    input.focus();
-  }
+// Ottieni la traduzione corrente
+function getTranslation(key) {
+  currentLanguage = getCurrentLanguage();
+  return systemTranslations[currentLanguage][key] || systemTranslations['it'][key];
 }
-
-// Funzioni UI helper
-function addMessage(text, type) {
-  const chatBox = document.getElementById("chatBox");
-  const messageDiv = document.createElement("div");
-  messageDiv.className = `message ${
-    type === "user" ? "user-message" : "bot-message"
-  }`;
-
-  // Formatta il testo
-  messageDiv.innerHTML = formatMessage(text);
-
-  chatBox.appendChild(messageDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function formatMessage(text) {
-  // Escape HTML per sicurezza
-  text = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-  // Converti markdown base
-  text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
-  text = text.replace(/\n/g, "<br>");
-  text = text.replace(/^- (.*?)$/gm, "• $1");
-
-  // Auto-link URL
-  text = text.replace(
-    /(https?:\/\/[^\s]+)/g,
-    '<a href="$1" target="_blank" rel="noopener">$1</a>'
-  );
-
-  return text;
-}
-
-function showError(message) {
-  const errorDiv = document.getElementById("errorMessage");
-  if (errorDiv) {
-    errorDiv.textContent = message;
-    errorDiv.classList.add("show");
-    setTimeout(() => errorDiv.classList.remove("show"), 5000);
-  }
-}
-
-function updateConnectionStatus(isConnected) {
-  const statusDot = document.getElementById("statusDot");
-  const statusText = document.getElementById("statusText");
-
-  if (statusDot && statusText) {
-    if (isConnected) {
-      statusDot.classList.remove("offline");
-      statusText.textContent = "Connesso";
-    } else {
-      statusDot.classList.add("offline");
-      statusText.textContent = "Offline";
-    }
-  }
-}
-
-// Event listeners
-document.addEventListener("DOMContentLoaded", function () {
-  initializeAssistant();
-
-  const userInput = document.getElementById("userInput");
-  if (userInput) {
-    userInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-    userInput.focus();
-  }
-});
-
-// Esporta per uso globale
-window.sendMessage = sendMessage;
-window.resetConversation = async () => {
-  if (assistant) {
-    await assistant.resetConversation();
-
-    // Ricarica la configurazione per il messaggio di benvenuto
-    try {
-      const config = await loadAssistantConfig();
-      document.getElementById("chatBox").innerHTML = `
-        <div class="message bot-message">
-          ${
-            config.resetMessage ||
-            "Conversazione resettata. Come posso aiutarti?"
-          }
-        </div>
-      `;
-    } catch (error) {
-      document.getElementById("chatBox").innerHTML = `
-        <div class="message bot-message">
-          Conversazione resettata. Come posso aiutarti?
-        </div>
-      `;
-    }
-  }
-};
