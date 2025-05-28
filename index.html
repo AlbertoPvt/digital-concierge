@@ -1,420 +1,306 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assistant Virtuale</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ffffff">
+    <title>Benvenuto!</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px;
-      }
-
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        animation: slideUp 0.8s ease-out;
-      }
-
-      @keyframes slideUp {
-        from {
-          transform: translateY(30px);
-          opacity: 0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
+
+        html {
+            height: 100%;
         }
-      }
 
-      .header {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        padding: 24px;
-        color: white;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .header::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.1) 0%,
-          transparent 70%
-        );
-        animation: ripple 4s linear infinite;
-      }
-
-      @keyframes ripple {
-        0% {
-          transform: rotate(0deg);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background-color: #667eea; /* Fallback solido */
         }
-        100% {
-          transform: rotate(360deg);
+
+        /* Background gradient come elemento separato */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: -2;
+            /* Evita che il gradiente vada sotto la status bar */
+            padding-top: env(safe-area-inset-top);
         }
-      }
 
-      .back-btn {
-        display: inline-flex;
-        align-items: center;
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: none;
-        font-weight: 500;
-        margin-bottom: 16px;
-        padding: 8px 16px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 1;
-      }
-
-      .back-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        transform: translateX(-4px);
-      }
-
-      .header-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        position: relative;
-        z-index: 1;
-      }
-
-      .chat-container {
-        padding: 24px;
-        height: 600px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .chat-box {
-        flex: 1;
-        background: #f8fafc;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 20px;
-        overflow-y: auto;
-        border: 1px solid #e2e8f0;
-        scroll-behavior: smooth;
-      }
-
-      .message {
-        margin-bottom: 16px;
-        padding: 12px 16px;
-        border-radius: 16px;
-        max-width: 80%;
-        animation: messageSlide 0.3s ease-out;
-      }
-
-      @keyframes messageSlide {
-        from {
-          transform: translateY(10px);
-          opacity: 0;
+        /* Animated background elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
         }
-        to {
-          transform: translateY(0);
-          opacity: 1;
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
         }
-      }
 
-      .user-message {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        margin-left: auto;
-        border-bottom-right-radius: 4px;
-      }
+        .shape-1 { width: 80px; height: 80px; top: 20%; left: 10%; animation-delay: -1s; }
+        .shape-2 { width: 60px; height: 60px; top: 60%; right: 15%; animation-delay: -3s; }
+        .shape-3 { width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: -2s; }
+        .shape-4 { width: 40px; height: 40px; top: 30%; right: 30%; animation-delay: -4s; }
 
-      .bot-message {
-        background: white;
-        border: 1px solid #e2e8f0;
-        color: #1e293b;
-        border-bottom-left-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
-
-      .input-container {
-        display: flex;
-        gap: 12px;
-        align-items: stretch;
-      }
-
-      .chat-input {
-        flex: 1;
-        padding: 16px 20px;
-        border: 2px solid #e2e8f0;
-        border-radius: 16px;
-        font-size: 1rem;
-        outline: none;
-        transition: all 0.3s ease;
-        background: white;
-      }
-
-      .chat-input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      }
-
-      .chat-input:disabled {
-        background: #f3f4f6;
-        cursor: not-allowed;
-      }
-
-      .send-btn {
-        padding: 16px 24px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        border-radius: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-width: 80px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .send-btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.2),
-          transparent
-        );
-        transition: left 0.5s;
-      }
-
-      .send-btn:hover::before {
-        left: 100%;
-      }
-
-      .send-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-      }
-
-      .send-btn:active {
-        transform: translateY(0);
-      }
-
-      .send-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .send-btn:disabled:hover {
-        transform: none;
-        box-shadow: none;
-      }
-
-      /* Typing indicator */
-      .typing-indicator {
-        display: none;
-        padding: 12px 16px;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        border-bottom-left-radius: 4px;
-        max-width: 80px;
-        margin-bottom: 16px;
-      }
-
-      .typing-indicator.show {
-        display: block;
-        animation: messageSlide 0.3s ease-out;
-      }
-
-      .typing-dots {
-        display: flex;
-        gap: 4px;
-      }
-
-      .typing-dot {
-        width: 8px;
-        height: 8px;
-        background: #94a3b8;
-        border-radius: 50%;
-        animation: typing 1.4s infinite;
-      }
-
-      .typing-dot:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .typing-dot:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-
-      @keyframes typing {
-        0%,
-        60%,
-        100% {
-          transform: translateY(0);
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
         }
-        30% {
-          transform: translateY(-10px);
-        }
-      }
 
-      /* Error message */
-      .error-message {
-        background: #fee2e2;
-        border: 1px solid #fecaca;
-        color: #dc2626;
-        padding: 12px 16px;
-        border-radius: 12px;
-        margin-bottom: 16px;
-        display: none;
-      }
-
-      .error-message.show {
-        display: block;
-      }
-
-      /* Connection status */
-      .connection-status {
-        position: absolute;
-        top: 24px;
-        right: 24px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #10b981;
-      }
-
-      .status-dot.offline {
-        background: #ef4444;
-      }
-
-      /* Responsive design */
-      @media (max-width: 768px) {
         .container {
-          margin: 10px;
-          border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out;
+            margin: auto;
+            position: relative;
+            z-index: 1;
         }
 
-        .header {
-          padding: 20px;
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .header-title {
-          font-size: 1.5rem;
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        .chat-container {
-          padding: 16px;
-          height: 500px;
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.1); }
         }
 
-        .message {
-          max-width: 90%;
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 48px;
+            line-height: 1.6;
         }
 
-        .input-container {
-          flex-direction: column;
-          gap: 8px;
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .send-btn {
-          padding: 12px;
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 24px;
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
-      }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn .icon {
+            font-size: 1.5rem;
+            margin-right: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Rendi le emoji bianche nei bottoni */
+        .btn-primary .icon,
+        .btn-success .icon,
+        .btn-warning .icon {
+            filter: grayscale(1) brightness(0) invert(1);
+        }
+
+        .nav-btn:hover .icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(132, 250, 176, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(252, 182, 159, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            body {
+                align-items: flex-start;
+                padding-top: 60px;
+            }
+            
+            .container {
+                padding: 32px 24px;
+                margin: 0 auto;
+                width: calc(100% - 20px);
+                max-width: 400px;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .nav-btn {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+            
+            .nav-btn .icon {
+                font-size: 1.3rem;
+                margin-right: 12px;
+            }
+        }
+
+        /* Subtle pulse animation for buttons */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        .nav-btn:hover {
+            animation: pulse 2s infinite;
+        }
+
+        /* Fix per Safari iOS */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                min-height: -webkit-fill-available;
+            }
+        }
     </style>
     <script>
         // Traduzioni
         const translations = {
             it: {
-                title: "Assistant Virtuale",
-                backToHome: "← Torna alla Home",
+                title: "Benvenuto!",
+                welcomeTitle: "🎉 Benvenuto!",
+                welcomeSubtitle: "Scopri tutto ciò che il tuo soggiorno ha da offrire",
                 virtualConcierge: "Concierge Virtuale",
-                connected: "Connesso",
-                offline: "Offline",
-                placeholder: "Scrivi la tua domanda...",
-                send: "Invia"
+                localDeals: "Offerte locali",
+                videoExperiences: "Video esperienze"
             },
             en: {
-                title: "Virtual Assistant",
-                backToHome: "← Back to Home",
+                title: "Welcome!",
+                welcomeTitle: "🎉 Welcome!",
+                welcomeSubtitle: "Discover everything your stay has to offer",
                 virtualConcierge: "Virtual Concierge",
-                connected: "Connected",
-                offline: "Offline",
-                placeholder: "Type your question...",
-                send: "Send"
+                localDeals: "Local deals",
+                videoExperiences: "Video experiences"
             },
             es: {
-                title: "Asistente Virtual",
-                backToHome: "← Volver al Inicio",
+                title: "¡Bienvenido!",
+                welcomeTitle: "🎉 ¡Bienvenido!",
+                welcomeSubtitle: "Descubre todo lo que tu estancia tiene para ofrecer",
                 virtualConcierge: "Conserje Virtual",
-                connected: "Conectado",
-                offline: "Sin conexión",
-                placeholder: "Escribe tu pregunta...",
-                send: "Enviar"
+                localDeals: "Ofertas locales",
+                videoExperiences: "Experiencias en video"
             },
             fr: {
-                title: "Assistant Virtuel",
-                backToHome: "← Retour à l'accueil",
+                title: "Bienvenue!",
+                welcomeTitle: "🎉 Bienvenue!",
+                welcomeSubtitle: "Découvrez tout ce que votre séjour a à offrir",
                 virtualConcierge: "Concierge Virtuel",
-                connected: "Connecté",
-                offline: "Hors ligne",
-                placeholder: "Écrivez votre question...",
-                send: "Envoyer"
+                localDeals: "Offres locales",
+                videoExperiences: "Expériences vidéo"
             },
             pt: {
-                title: "Assistente Virtual",
-                backToHome: "← Voltar ao Início",
+                title: "Bem-vindo!",
+                welcomeTitle: "🎉 Bem-vindo!",
+                welcomeSubtitle: "Descubra tudo o que a sua estadia tem a oferecer",
                 virtualConcierge: "Concierge Virtual",
-                connected: "Conectado",
-                offline: "Offline",
-                placeholder: "Digite sua pergunta...",
-                send: "Enviar"
+                localDeals: "Ofertas locais",
+                videoExperiences: "Experiências em vídeo"
             },
             de: {
-                title: "Virtueller Assistent",
-                backToHome: "← Zurück zur Startseite",
+                title: "Willkommen!",
+                welcomeTitle: "🎉 Willkommen!",
+                welcomeSubtitle: "Entdecken Sie alles, was Ihr Aufenthalt zu bieten hat",
                 virtualConcierge: "Virtueller Concierge",
-                connected: "Verbunden",
-                offline: "Offline",
-                placeholder: "Schreiben Sie Ihre Frage...",
-                send: "Senden"
+                localDeals: "Lokale Angebote",
+                videoExperiences: "Video-Erlebnisse"
             }
         };
 
@@ -449,75 +335,53 @@
             } else {
                 updateContent(t);
             }
-            
-            // Salva la lingua corrente per essere utilizzata da assistant-client.js
-            window.currentLanguage = lang;
         }
 
         function updateContent(t) {
             // Aggiorna i testi
-            const backBtn = document.querySelector('.back-btn');
-            if (backBtn) backBtn.textContent = t.backToHome;
+            const welcomeTitle = document.querySelector('.welcome-title');
+            if (welcomeTitle) welcomeTitle.textContent = t.welcomeTitle;
             
-            const headerTitle = document.querySelector('.header-title span:last-child');
-            if (headerTitle) headerTitle.textContent = t.virtualConcierge;
+            const welcomeSubtitle = document.querySelector('.welcome-subtitle');
+            if (welcomeSubtitle) welcomeSubtitle.textContent = t.welcomeSubtitle;
             
-            const statusText = document.getElementById('statusText');
-            if (statusText) statusText.textContent = t.connected;
-            
-            const chatInput = document.getElementById('userInput');
-            if (chatInput) chatInput.placeholder = t.placeholder;
-            
-            const sendButton = document.getElementById('sendButton');
-            if (sendButton) sendButton.textContent = t.send;
+            // Aggiorna i bottoni
+            const buttons = document.querySelectorAll('.nav-btn span:not(.icon)');
+            if (buttons[0]) buttons[0].textContent = t.virtualConcierge;
+            if (buttons[1]) buttons[1].textContent = t.localDeals;
+            if (buttons[2]) buttons[2].textContent = t.videoExperiences;
         }
 
         // Applica le traduzioni all'avvio
         applyTranslations();
     </script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <a href="index.html" class="back-btn">← Torna alla Home</a>
-        <h2 class="header-title">
-          <span>💬</span>
-          <span>Concierge Virtuale</span>
-        </h2>
-        <div class="connection-status">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="statusText">Connesso</span>
-        </div>
-      </div>
-
-      <div class="chat-container">
-        <div id="chatBox" class="chat-box"></div>
-
-        <div class="error-message" id="errorMessage"></div>
-
-        <div class="typing-indicator" id="typingIndicator">
-          <div class="typing-dots">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        </div>
-
-        <div class="input-container">
-          <input
-            type="text"
-            id="userInput"
-            class="chat-input"
-            placeholder="Scrivi la tua domanda..."
-          />
-          <button onclick="sendMessage()" id="sendButton" class="send-btn">
-            Invia
-          </button>
-        </div>
-      </div>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
     </div>
 
-    <script src="js/assistant-config-milano.js"></script>
-    <script src="js/assistant-client.js"></script>
-  </body>
+    <div class="container">
+        <h1 class="welcome-title">🎉 Benvenuto!</h1>
+        <p class="welcome-subtitle">Scopri tutto ciò che il tuo soggiorno ha da offrire</p>
+        
+        <div class="nav-buttons">
+            <a href="assistant.html" class="nav-btn btn-primary">
+                <span class="icon">👤</span>
+                <span>Concierge Virtuale</span>
+            </a>
+            <a href="deals.html" class="nav-btn btn-success">
+                <span class="icon">🏷️</span>
+                <span>Offerte locali</span>
+            </a>
+            <a href="videos.html" class="nav-btn btn-warning">
+                <span class="icon">🎬</span>
+                <span>Video esperienze</span>
+            </a>
+        </div>
+    </div>
+</body>
 </html>
