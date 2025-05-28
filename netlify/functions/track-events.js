@@ -1,3 +1,5 @@
+// netlify/functions/track-event.js
+
 exports.handler = async (event, context) => {
   // Solo metodo POST permesso
   if (event.httpMethod !== 'POST') {
@@ -13,29 +15,39 @@ exports.handler = async (event, context) => {
     
     // Configurazione NoCodeAPI
     const NOCODEAPI_ENDPOINT = process.env.NOCODEAPI_ENDPOINT;
-    const NOCODEAPI_TOKEN = process.env.NOCODEAPI_TOKEN;
+    const SHEET_TAB_NAME = process.env.SHEET_TAB_NAME || 'Foglio1'; // Default: Foglio1
     
-    // Verifica che le variabili d'ambiente siano configurate
-    if (!NOCODEAPI_ENDPOINT || !NOCODEAPI_TOKEN) {
-      console.error('Missing environment variables');
+    // Verifica che la variabile d'ambiente sia configurata
+    if (!NOCODEAPI_ENDPOINT) {
+      console.error('Missing NOCODEAPI_ENDPOINT environment variable');
       return {
         statusCode: 500,
         body: JSON.stringify({ error: 'Server configuration error' })
       };
     }
     
-    // Invia a NoCodeAPI
-    const response = await fetch(NOCODEAPI_ENDPOINT, {
+    // Invia a NoCodeAPI con tabId come parametro URL
+    const url = `${NOCODEAPI_ENDPOINT}?tabId=${encodeURIComponent(SHEET_TAB_NAME)}`;
+    
+    // Crea l'array con i valori nell'ordine corretto delle colonne
+    const rowData = [
+      eventData.timestamp,
+      eventData.eventType,
+      eventData.dealName,
+      eventData.dealCategory,
+      eventData.dealDiscount,
+      eventData.hotelName,
+      eventData.url,
+      eventData.userAgent,
+      new Date().toISOString() // serverTimestamp
+    ];
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${NOCODEAPI_TOKEN}`
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        ...eventData,
-        // Aggiungi timestamp del server per maggiore affidabilità
-        serverTimestamp: new Date().toISOString()
-      })
+      body: JSON.stringify([rowData]) // Array di array
     });
     
     if (!response.ok) {
