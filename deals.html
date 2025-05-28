@@ -439,153 +439,35 @@
     <script src="js/deals-config-milano.js"></script>
     
     <script>
-        // ============ SISTEMA DI TRACKING ============
-        const TrackingSystem = {
-            // Configurazione NoCodeAPI
-            API_URL: 'YOUR_NOCODEAPI_ENDPOINT', // Sostituisci con il tuo endpoint NoCodeAPI
-            API_TOKEN: 'YOUR_API_TOKEN', // Sostituisci con il tuo token
-            
-            // Configurazione sistema
-            MAX_LOCAL_EVENTS: 10,
-            RETRY_DELAY: 5000, // 5 secondi
-            MAX_RETRIES: 3,
-            
-            // Storage keys
-            STORAGE_KEY: 'pending_tracking_events',
-            
-            // Inizializza il sistema
-            init() {
-                // Carica eventi pendenti e prova a inviarli
-                this.processPendingEvents();
-                
-                // Riprova ogni 30 secondi
-                setInterval(() => this.processPendingEvents(), 30000);
-            },
-            
-            // Traccia un evento
-            async trackEvent(eventType, dealData, hotelName) {
-                const event = {
-                    id: this.generateEventId(),
+        // Sistema di tracking tramite Netlify Functions
+        async function trackEvent(eventType, dealData, hotelName) {
+            try {
+                const eventData = {
                     timestamp: new Date().toISOString(),
-                    eventType: eventType, // 'coupon_click' o 'website_click'
+                    eventType: eventType,
                     dealName: dealData.name,
                     dealCategory: dealData.category || 'general',
                     dealDiscount: dealData.discount,
                     hotelName: hotelName,
                     url: window.location.href,
-                    userAgent: navigator.userAgent,
-                    retries: 0
+                    userAgent: navigator.userAgent
                 };
                 
-                // Prova a inviare immediatamente
-                const sent = await this.sendEvent(event);
+                // Invia a Netlify Function
+                await fetch('/.netlify/functions/track-event', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(eventData)
+                });
                 
-                if (!sent) {
-                    // Salva localmente se fallisce
-                    this.saveEventLocally(event);
-                }
-            },
-            
-            // Invia evento a NoCodeAPI
-            async sendEvent(event) {
-                try {
-                    const response = await fetch(this.API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${this.API_TOKEN}`
-                        },
-                        body: JSON.stringify(event)
-                    });
-                    
-                    if (response.ok) {
-                        console.log('Event tracked successfully:', event.id);
-                        return true;
-                    }
-                    
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                } catch (error) {
-                    console.error('Failed to track event:', error);
-                    return false;
-                }
-            },
-            
-            // Salva evento localmente
-            saveEventLocally(event) {
-                try {
-                    let events = this.getLocalEvents();
-                    
-                    // Mantieni solo gli ultimi MAX_LOCAL_EVENTS eventi
-                    if (events.length >= this.MAX_LOCAL_EVENTS) {
-                        events = events.slice(-this.MAX_LOCAL_EVENTS + 1);
-                    }
-                    
-                    events.push(event);
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(events));
-                    
-                    console.log('Event saved locally:', event.id);
-                } catch (error) {
-                    console.error('Failed to save event locally:', error);
-                }
-            },
-            
-            // Recupera eventi locali
-            getLocalEvents() {
-                try {
-                    const stored = localStorage.getItem(this.STORAGE_KEY);
-                    return stored ? JSON.parse(stored) : [];
-                } catch (error) {
-                    console.error('Failed to get local events:', error);
-                    return [];
-                }
-            },
-            
-            // Processa eventi pendenti
-            async processPendingEvents() {
-                const events = this.getLocalEvents();
-                
-                if (events.length === 0) return;
-                
-                console.log(`Processing ${events.length} pending events...`);
-                
-                const remainingEvents = [];
-                
-                for (const event of events) {
-                    // Salta eventi con troppi retry
-                    if (event.retries >= this.MAX_RETRIES) {
-                        console.log(`Event ${event.id} exceeded max retries, discarding`);
-                        continue;
-                    }
-                    
-                    // Incrementa retry counter
-                    event.retries = (event.retries || 0) + 1;
-                    
-                    // Prova a inviare
-                    const sent = await this.sendEvent(event);
-                    
-                    if (!sent) {
-                        remainingEvents.push(event);
-                        // Pausa tra tentativi
-                        await new Promise(resolve => setTimeout(resolve, this.RETRY_DELAY));
-                    }
-                }
-                
-                // Aggiorna storage con eventi non inviati
-                if (remainingEvents.length !== events.length) {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(remainingEvents));
-                }
-            },
-            
-            // Genera ID univoco per evento
-            generateEventId() {
-                return `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                console.log(`Event tracked: ${eventType}`);
+            } catch (error) {
+                console.error('Tracking error:', error);
+                // Non bloccare l'esperienza utente se il tracking fallisce
             }
-        };
-        
-        // Inizializza il sistema di tracking
-        TrackingSystem.init();
-        
-        // ============ CODICE ORIGINALE CON TRACKING INTEGRATO ============
+        }
       
         // Generatore di codici coupon
         function generateCouponCode(dealName, hotelName) {
@@ -600,8 +482,8 @@
 
         // Mostra modal coupon
         function showCoupon(deal, hotelName) {
-            // TRACKING: Traccia click su coupon
-            TrackingSystem.trackEvent('coupon_click', deal, hotelName);
+            // Traccia l'evento
+            trackEvent('coupon_click', deal, hotelName);
             
             const modal = document.getElementById('couponModal');
             const code = generateCouponCode(deal.name, hotelName);
@@ -624,8 +506,8 @@
 
         // Visita sito web
         function visitWebsite(deal, hotelName) {
-            // TRACKING: Traccia click su sito web
-            TrackingSystem.trackEvent('website_click', deal, hotelName || 'Hotel');
+            // Traccia l'evento
+            trackEvent('website_click', deal, hotelName || 'Hotel');
             
             if (deal.link) {
                 window.open(deal.link, '_blank');
@@ -692,6 +574,7 @@
                         dealElement.setAttribute('data-category', deal.category);
                     }
                     
+                    // Modifica qui per passare hotelName a visitWebsite
                     dealElement.innerHTML = `
                         <div class="deal-header">
                             <div class="deal-icon">${deal.icon || '🎁'}</div>
